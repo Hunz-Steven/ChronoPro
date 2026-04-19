@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-<title>Chrono Pro V9.19 – PWA & multilingue</title>
+<title>Chrono Pro V9.20 – PWA & multilingue</title>
 <link rel="manifest" href="manifest.json">
 <style>
   *{box-sizing:border-box;}
@@ -34,9 +34,6 @@
   .img-loader{display:inline-block;width:20px;height:20px;border:2px solid #ccc;border-top-color:#007bff;border-radius:50%;animation:spin 0.6s linear infinite;}
   #lang-wrapper{display:flex;align-items:center;gap:8px;margin-bottom:12px;justify-content:center;flex-wrap:wrap}
   #lang-select{padding:6px 10px;border-radius:6px;border:1px solid #ccc;font-size:15px;background:white;cursor:pointer}
-  #lang-custom-input{padding:6px 10px;border-radius:6px;border:1px solid #ccc;font-size:14px;width:160px;display:none}
-  #lang-translate-btn{padding:6px 14px;font-size:14px;margin:0;display:none}
-  #lang-status{font-size:12px;color:#888;display:none}
   @keyframes spin{to{transform:rotate(360deg)}}
   @media (max-width: 480px) and (orientation: landscape){#timer{font-size:32px;margin:10px 0}button{padding:6px 10px;font-size:12px}#image-container.double img{max-height:120px}#workout-container{padding:15px}}
   @media (max-width: 380px){.flex-buttons button{padding:8px 12px;font-size:13px}#timer{font-size:40px}}
@@ -61,11 +58,7 @@
       <option value="nl">🇳🇱 Nederlands</option>
       <option value="pl">🇵🇱 Polski</option>
       <option value="tr">🇹🇷 Türkçe</option>
-      <option value="other">✏️ Autre langue…</option>
     </select>
-    <input type="text" id="lang-custom-input" placeholder="Ex: hindi, swahili…">
-    <button id="lang-translate-btn">Traduire</button>
-    <span id="lang-status"></span>
   </div>
 
   <div id="image-container" class="single">
@@ -86,7 +79,7 @@
   <button id="reset-btn" data-i18n="reset">⟳ Réinitialiser</button>
   <button id="config-btn" data-i18n="config">⚙ Configurer</button>
   <div id="autosave-status"></div>
-  <div class="version">Chrono Pro V9.19</div>
+  <div class="version">Chrono Pro V9.20</div>
 </div>
 
 <div id="config-panel" class="config-panel">
@@ -137,170 +130,395 @@
 </div>
 
 <script>
-// ===== TRADUCTIONS INTÉGRÉES (fr + en) =====
+// ===== TRADUCTIONS COMPLÈTES POUR 15 LANGUES =====
 const BASE_TR = {
-  fr:{
-    ready:"Prêt",preparation:"Préparation",rest:"Repos",work:"TRAVAIL",tempo:"TEMPO",
-    nextExercise:"Prochain exercice",prev:"◀ Précédent",next:"Suivant ▶",start:"▶ Démarrer",
-    pause:"⏸ Pause",reset:"⟳ Réinitialiser",config:"⚙ Configurer",configTitle:"Configuration",
-    setupLabel:"Mise en place (secondes) :",voiceLabel:"Synthèse vocale",
+  fr: {
+    ready:"Prêt", preparation:"Préparation", rest:"Repos", work:"TRAVAIL", tempo:"TEMPO",
+    nextExercise:"Prochain exercice", prev:"◀ Précédent", next:"Suivant ▶", start:"▶ Démarrer",
+    pause:"⏸ Pause", reset:"⟳ Réinitialiser", config:"⚙ Configurer", configTitle:"Configuration",
+    setupLabel:"Mise en place (secondes) :", voiceLabel:"Synthèse vocale",
     sequenceLabel:"Séquence d'entraînement :",
     sequenceHelp:"Exemple : 30x(4:10-P10)-P30-30x(11:10-P20). Formats : 8:40 (durée) ou 8:6@3-0-1-0 (tempo). Repos : P30.",
-    advancedTitle:"📁 Gestion des programmes (avancé)",
-    programsLabel:"Programmes sauvegardés :",saveProgram:"💾 Sauvegarder",
-    deleteProgram:"🗑 Supprimer",exportProgram:"📤 Exporter séquence",
-    importProgram:"📥 Importer séquence",exportWeek:"📄 Exporter texte",
-    exportAllPrograms:"📦 Exporter tous",importPrograms:"📥 Importer programmes",
-    exportFull:"💾 Exporter config",importFull:"📥 Importer config",cleanExercises:"🧹 Nettoyer",
-    exerciseListTitle:"📋 Liste des exercices",addExercise:"+ Ajouter un exercice",
-    saveConfig:"💾 Sauvegarder",finished:"FINI !",completed:"Terminé",wellDone:"Bravo !",
-    workDuration:"TRAVAIL (durée)",restDuration:"REPOS",tempoMode:"TRAVAIL (TEMPO)",
-    setupPhase:"Mise en place",pauseStatus:"⏸ Pause",pauseTempo:"⏸ Pause tempo",resume:"Reprendre",
-    blockLabel:"Bloc",totalDuration:"Durée totale",
-    translateStatus:"Traduction en cours…",translateDone:"Traduction appliquée ✓",translateError:"Erreur de traduction",
-    loadProgram:"-- Charger un programme --",confirmDelete:"Supprimer",confirmOverwrite:"Écraser",
-    programName:"Nom du programme :",exportProgramName:"Nom du programme à exporter :",
-    invalidFile:"Format invalide",importSuccess:"importé(s) avec succès",noPrograms:"Aucun programme sauvegardé",
-    selectProgram:"Sélectionnez un programme",importedFusion:"Programme importé (fusion UUID)",
-    importComplete:"Import complet réussi.",cleanDone:"🧹 Nettoyage :",cleanNone:"Aucun exercice invalide trouvé.",
-    seqCleaned:"⚠️ Séquence nettoyée (IDs invalides supprimés).",saved:"✓ Sauvegardé",
-    progSaved:"Programme sauvegardé",progDeleted:"Programme supprimé",progLoaded:"chargé et réinitialisé.",
-    allExported:"Tous les programmes exportés.",noNewImported:"Aucun nouveau programme importé.",
-    exercisesRemoved:"exercice(s) invalide(s) supprimé(s).",
-    translateBtn:"Traduire"
+    advancedTitle:"📁 Gestion des programmes (avancé)", programsLabel:"Programmes sauvegardés :",
+    saveProgram:"💾 Sauvegarder", deleteProgram:"🗑 Supprimer", exportProgram:"📤 Exporter séquence",
+    importProgram:"📥 Importer séquence", exportWeek:"📄 Exporter texte", exportAllPrograms:"📦 Exporter tous",
+    importPrograms:"📥 Importer programmes", exportFull:"💾 Exporter config", importFull:"📥 Importer config",
+    cleanExercises:"🧹 Nettoyer", exerciseListTitle:"📋 Liste des exercices", addExercise:"+ Ajouter un exercice",
+    saveConfig:"💾 Sauvegarder", finished:"FINI !", completed:"Terminé", wellDone:"Bravo !",
+    workDuration:"TRAVAIL (durée)", restDuration:"REPOS", tempoMode:"TRAVAIL (TEMPO)",
+    setupPhase:"Mise en place", pauseStatus:"⏸ Pause", pauseTempo:"⏸ Pause tempo", resume:"Reprendre",
+    blockLabel:"Bloc", totalDuration:"Durée totale", loadProgram:"-- Charger un programme --",
+    confirmDelete:"Supprimer", confirmOverwrite:"Écraser", programName:"Nom du programme :",
+    exportProgramName:"Nom du programme à exporter :", invalidFile:"Format invalide",
+    importSuccess:"importé(s) avec succès", noPrograms:"Aucun programme sauvegardé",
+    selectProgram:"Sélectionnez un programme", importedFusion:"Programme importé (fusion UUID)",
+    importComplete:"Import complet réussi.", cleanDone:"🧹 Nettoyage :", cleanNone:"Aucun exercice invalide trouvé.",
+    seqCleaned:"⚠️ Séquence nettoyée (IDs invalides supprimés).", saved:"✓ Sauvegardé",
+    progSaved:"Programme sauvegardé", progDeleted:"Programme supprimé", progLoaded:"chargé et réinitialisé.",
+    allExported:"Tous les programmes exportés.", noNewImported:"Aucun nouveau programme importé.",
+    exercisesRemoved:"exercice(s) invalide(s) supprimé(s)."
   },
-  en:{
-    ready:"Ready",preparation:"Setup",rest:"Rest",work:"WORK",tempo:"TEMPO",
-    nextExercise:"Next exercise",prev:"◀ Previous",next:"Next ▶",start:"▶ Start",
-    pause:"⏸ Pause",reset:"⟳ Reset",config:"⚙ Settings",configTitle:"Settings",
-    setupLabel:"Setup (seconds):",voiceLabel:"Voice synthesis",
+  en: {
+    ready:"Ready", preparation:"Setup", rest:"Rest", work:"WORK", tempo:"TEMPO",
+    nextExercise:"Next exercise", prev:"◀ Previous", next:"Next ▶", start:"▶ Start",
+    pause:"⏸ Pause", reset:"⟳ Reset", config:"⚙ Settings", configTitle:"Settings",
+    setupLabel:"Setup (seconds):", voiceLabel:"Voice synthesis",
     sequenceLabel:"Training sequence:",
     sequenceHelp:"Example: 30x(4:10-P10)-P30-30x(11:10-P20). Formats: 8:40 (duration) or 8:6@3-0-1-0 (tempo). Rest: P30.",
-    advancedTitle:"📁 Program management (advanced)",
-    programsLabel:"Saved programs:",saveProgram:"💾 Save",
-    deleteProgram:"🗑 Delete",exportProgram:"📤 Export sequence",
-    importProgram:"📥 Import sequence",exportWeek:"📄 Export text",
-    exportAllPrograms:"📦 Export all",importPrograms:"📥 Import programs",
-    exportFull:"💾 Export config",importFull:"📥 Import config",cleanExercises:"🧹 Clean",
-    exerciseListTitle:"📋 Exercise list",addExercise:"+ Add exercise",
-    saveConfig:"💾 Save",finished:"FINISHED!",completed:"Completed",wellDone:"Well done!",
-    workDuration:"WORK (duration)",restDuration:"REST",tempoMode:"WORK (TEMPO)",
-    setupPhase:"Setup",pauseStatus:"⏸ Paused",pauseTempo:"⏸ Tempo paused",resume:"Resume",
-    blockLabel:"Block",totalDuration:"Total duration",
-    translateStatus:"Translating…",translateDone:"Translation applied ✓",translateError:"Translation error",
-    loadProgram:"-- Load a program --",confirmDelete:"Delete",confirmOverwrite:"Overwrite",
-    programName:"Program name:",exportProgramName:"Program name to export:",
-    invalidFile:"Invalid format",importSuccess:"imported successfully",noPrograms:"No saved programs",
-    selectProgram:"Select a program",importedFusion:"Program imported (UUID merge)",
-    importComplete:"Full import successful.",cleanDone:"🧹 Cleaned:",cleanNone:"No invalid exercises found.",
-    seqCleaned:"⚠️ Sequence cleaned (invalid IDs removed).",saved:"✓ Saved",
-    progSaved:"Program saved",progDeleted:"Program deleted",progLoaded:"loaded and reset.",
-    allExported:"All programs exported.",noNewImported:"No new programs imported.",
-    exercisesRemoved:"invalid exercise(s) removed.",
-    translateBtn:"Translate"
+    advancedTitle:"📁 Program management (advanced)", programsLabel:"Saved programs:",
+    saveProgram:"💾 Save", deleteProgram:"🗑 Delete", exportProgram:"📤 Export sequence",
+    importProgram:"📥 Import sequence", exportWeek:"📄 Export text", exportAllPrograms:"📦 Export all",
+    importPrograms:"📥 Import programs", exportFull:"💾 Export config", importFull:"📥 Import config",
+    cleanExercises:"🧹 Clean", exerciseListTitle:"📋 Exercise list", addExercise:"+ Add exercise",
+    saveConfig:"💾 Save", finished:"FINISHED!", completed:"Completed", wellDone:"Well done!",
+    workDuration:"WORK (duration)", restDuration:"REST", tempoMode:"WORK (TEMPO)",
+    setupPhase:"Setup", pauseStatus:"⏸ Paused", pauseTempo:"⏸ Tempo paused", resume:"Resume",
+    blockLabel:"Block", totalDuration:"Total duration", loadProgram:"-- Load a program --",
+    confirmDelete:"Delete", confirmOverwrite:"Overwrite", programName:"Program name:",
+    exportProgramName:"Program name to export:", invalidFile:"Invalid format",
+    importSuccess:"imported successfully", noPrograms:"No saved programs",
+    selectProgram:"Select a program", importedFusion:"Program imported (UUID merge)",
+    importComplete:"Full import successful.", cleanDone:"🧹 Cleaned:", cleanNone:"No invalid exercises found.",
+    seqCleaned:"⚠️ Sequence cleaned (invalid IDs removed).", saved:"✓ Saved",
+    progSaved:"Program saved", progDeleted:"Program deleted", progLoaded:"loaded and reset.",
+    allExported:"All programs exported.", noNewImported:"No new programs imported.",
+    exercisesRemoved:"invalid exercise(s) removed."
+  },
+  de: {
+    ready:"Bereit", preparation:"Vorbereitung", rest:"Pause", work:"ARBEIT", tempo:"TEMPO",
+    nextExercise:"Nächste Übung", prev:"◀ Zurück", next:"Weiter ▶", start:"▶ Start",
+    pause:"⏸ Pause", reset:"⟳ Zurücksetzen", config:"⚙ Einstellungen", configTitle:"Einstellungen",
+    setupLabel:"Vorbereitung (Sek.):", voiceLabel:"Sprachausgabe",
+    sequenceLabel:"Trainingssequenz:", sequenceHelp:"Beispiel: 30x(4:10-P10)-P30-30x(11:10-P20). Formate: 8:40 (Dauer) oder 8:6@3-0-1-0 (Tempo). Pause: P30.",
+    advancedTitle:"📁 Programmverwaltung (erweitert)", programsLabel:"Gespeicherte Programme:",
+    saveProgram:"💾 Speichern", deleteProgram:"🗑 Löschen", exportProgram:"📤 Sequenz exportieren",
+    importProgram:"📥 Sequenz importieren", exportWeek:"📄 Als Text exportieren", exportAllPrograms:"📦 Alle exportieren",
+    importPrograms:"📥 Programme importieren", exportFull:"💾 Konfiguration exportieren", importFull:"📥 Konfiguration importieren",
+    cleanExercises:"🧹 Bereinigen", exerciseListTitle:"📋 Übungsliste", addExercise:"+ Übung hinzufügen",
+    saveConfig:"💾 Speichern", finished:"FERTIG!", completed:"Abgeschlossen", wellDone:"Gut gemacht!",
+    workDuration:"ARBEIT (Dauer)", restDuration:"PAUSE", tempoMode:"ARBEIT (TEMPO)",
+    setupPhase:"Vorbereitung", pauseStatus:"⏸ Pausiert", pauseTempo:"⏸ Tempo pausiert", resume:"Fortsetzen",
+    blockLabel:"Block", totalDuration:"Gesamtdauer", loadProgram:"-- Programm laden --",
+    confirmDelete:"Löschen", confirmOverwrite:"Überschreiben", programName:"Programmname:",
+    exportProgramName:"Zu exportierender Programmname:", invalidFile:"Ungültiges Format",
+    importSuccess:"erfolgreich importiert", noPrograms:"Keine gespeicherten Programme",
+    selectProgram:"Wählen Sie ein Programm", importedFusion:"Programm importiert (UUID-Zusammenführung)",
+    importComplete:"Vollständiger Import erfolgreich.", cleanDone:"🧹 Bereinigt:", cleanNone:"Keine ungültigen Übungen gefunden.",
+    seqCleaned:"⚠️ Sequenz bereinigt (ungültige IDs entfernt).", saved:"✓ Gespeichert",
+    progSaved:"Programm gespeichert", progDeleted:"Programm gelöscht", progLoaded:"geladen und zurückgesetzt.",
+    allExported:"Alle Programme exportiert.", noNewImported:"Keine neuen Programme importiert.",
+    exercisesRemoved:"ungültige Übung(en) entfernt."
+  },
+  es: {
+    ready:"Listo", preparation:"Preparación", rest:"Descanso", work:"TRABAJO", tempo:"TEMPO",
+    nextExercise:"Siguiente ejercicio", prev:"◀ Anterior", next:"Siguiente ▶", start:"▶ Iniciar",
+    pause:"⏸ Pausa", reset:"⟳ Reiniciar", config:"⚙ Configurar", configTitle:"Configuración",
+    setupLabel:"Preparación (segundos):", voiceLabel:"Síntesis de voz",
+    sequenceLabel:"Secuencia de entrenamiento:", sequenceHelp:"Ejemplo: 30x(4:10-P10)-P30-30x(11:10-P20). Formatos: 8:40 (duración) o 8:6@3-0-1-0 (tempo). Descanso: P30.",
+    advancedTitle:"📁 Gestión de programas (avanzado)", programsLabel:"Programas guardados:",
+    saveProgram:"💾 Guardar", deleteProgram:"🗑 Eliminar", exportProgram:"📤 Exportar secuencia",
+    importProgram:"📥 Importar secuencia", exportWeek:"📄 Exportar texto", exportAllPrograms:"📦 Exportar todos",
+    importPrograms:"📥 Importar programas", exportFull:"💾 Exportar configuración", importFull:"📥 Importar configuración",
+    cleanExercises:"🧹 Limpiar", exerciseListTitle:"📋 Lista de ejercicios", addExercise:"+ Añadir ejercicio",
+    saveConfig:"💾 Guardar", finished:"¡TERMINADO!", completed:"Completado", wellDone:"¡Bien hecho!",
+    workDuration:"TRABAJO (duración)", restDuration:"DESCANSO", tempoMode:"TRABAJO (TEMPO)",
+    setupPhase:"Preparación", pauseStatus:"⏸ Pausado", pauseTempo:"⏸ Tempo pausado", resume:"Reanudar",
+    blockLabel:"Bloque", totalDuration:"Duración total", loadProgram:"-- Cargar programa --",
+    confirmDelete:"Eliminar", confirmOverwrite:"Sobrescribir", programName:"Nombre del programa:",
+    exportProgramName:"Nombre del programa a exportar:", invalidFile:"Formato inválido",
+    importSuccess:"importado(s) con éxito", noPrograms:"No hay programas guardados",
+    selectProgram:"Seleccione un programa", importedFusion:"Programa importado (fusión UUID)",
+    importComplete:"Importación completa exitosa.", cleanDone:"🧹 Limpiado:", cleanNone:"No se encontraron ejercicios inválidos.",
+    seqCleaned:"⚠️ Secuencia limpiada (IDs inválidos eliminados).", saved:"✓ Guardado",
+    progSaved:"Programa guardado", progDeleted:"Programa eliminado", progLoaded:"cargado y reiniciado.",
+    allExported:"Todos los programas exportados.", noNewImported:"No se importaron nuevos programas.",
+    exercisesRemoved:"ejercicio(s) inválido(s) eliminado(s)."
+  },
+  it: {
+    ready:"Pronto", preparation:"Preparazione", rest:"Riposo", work:"LAVORO", tempo:"TEMPO",
+    nextExercise:"Prossimo esercizio", prev:"◀ Precedente", next:"Prossimo ▶", start:"▶ Avvia",
+    pause:"⏸ Pausa", reset:"⟳ Reimposta", config:"⚙ Impostazioni", configTitle:"Impostazioni",
+    setupLabel:"Preparazione (secondi):", voiceLabel:"Sintesi vocale",
+    sequenceLabel:"Sequenza di allenamento:", sequenceHelp:"Esempio: 30x(4:10-P10)-P30-30x(11:10-P20). Formati: 8:40 (durata) o 8:6@3-0-1-0 (tempo). Riposo: P30.",
+    advancedTitle:"📁 Gestione programmi (avanzato)", programsLabel:"Programmi salvati:",
+    saveProgram:"💾 Salva", deleteProgram:"🗑 Elimina", exportProgram:"📤 Esporta sequenza",
+    importProgram:"📥 Importa sequenza", exportWeek:"📄 Esporta testo", exportAllPrograms:"📦 Esporta tutti",
+    importPrograms:"📥 Importa programmi", exportFull:"💾 Esporta configurazione", importFull:"📥 Importa configurazione",
+    cleanExercises:"🧹 Pulisci", exerciseListTitle:"📋 Elenco esercizi", addExercise:"+ Aggiungi esercizio",
+    saveConfig:"💾 Salva", finished:"FINITO!", completed:"Completato", wellDone:"Ben fatto!",
+    workDuration:"LAVORO (durata)", restDuration:"RIPOSO", tempoMode:"LAVORO (TEMPO)",
+    setupPhase:"Preparazione", pauseStatus:"⏸ In pausa", pauseTempo:"⏸ Tempo in pausa", resume:"Riprendi",
+    blockLabel:"Blocco", totalDuration:"Durata totale", loadProgram:"-- Carica programma --",
+    confirmDelete:"Elimina", confirmOverwrite:"Sovrascrivi", programName:"Nome programma:",
+    exportProgramName:"Nome programma da esportare:", invalidFile:"Formato non valido",
+    importSuccess:"importato/i con successo", noPrograms:"Nessun programma salvato",
+    selectProgram:"Seleziona un programma", importedFusion:"Programma importato (unione UUID)",
+    importComplete:"Importazione completa riuscita.", cleanDone:"🧹 Pulito:", cleanNone:"Nessun esercizio non valido trovato.",
+    seqCleaned:"⚠️ Sequenza pulita (ID non validi rimossi).", saved:"✓ Salvato",
+    progSaved:"Programma salvato", progDeleted:"Programma eliminato", progLoaded:"caricato e resettato.",
+    allExported:"Tutti i programmi esportati.", noNewImported:"Nessun nuovo programma importato.",
+    exercisesRemoved:"esercizio/i non valido/i rimossi."
+  },
+  pt: {
+    ready:"Pronto", preparation:"Preparação", rest:"Descanso", work:"TRABALHO", tempo:"TEMPO",
+    nextExercise:"Próximo exercício", prev:"◀ Anterior", next:"Próximo ▶", start:"▶ Iniciar",
+    pause:"⏸ Pausa", reset:"⟳ Reiniciar", config:"⚙ Configurar", configTitle:"Configuração",
+    setupLabel:"Preparação (segundos):", voiceLabel:"Síntese de voz",
+    sequenceLabel:"Sequência de treino:", sequenceHelp:"Exemplo: 30x(4:10-P10)-P30-30x(11:10-P20). Formatos: 8:40 (duração) ou 8:6@3-0-1-0 (tempo). Descanso: P30.",
+    advancedTitle:"📁 Gestão de programas (avançado)", programsLabel:"Programas salvos:",
+    saveProgram:"💾 Salvar", deleteProgram:"🗑 Excluir", exportProgram:"📤 Exportar sequência",
+    importProgram:"📥 Importar sequência", exportWeek:"📄 Exportar texto", exportAllPrograms:"📦 Exportar todos",
+    importPrograms:"📥 Importar programas", exportFull:"💾 Exportar configuração", importFull:"📥 Importar configuração",
+    cleanExercises:"🧹 Limpar", exerciseListTitle:"📋 Lista de exercícios", addExercise:"+ Adicionar exercício",
+    saveConfig:"💾 Salvar", finished:"FINALIZADO!", completed:"Concluído", wellDone:"Muito bem!",
+    workDuration:"TRABALHO (duração)", restDuration:"DESCANSO", tempoMode:"TRABALHO (TEMPO)",
+    setupPhase:"Preparação", pauseStatus:"⏸ Pausado", pauseTempo:"⏸ Tempo pausado", resume:"Retomar",
+    blockLabel:"Bloco", totalDuration:"Duração total", loadProgram:"-- Carregar programa --",
+    confirmDelete:"Excluir", confirmOverwrite:"Sobrescrever", programName:"Nome do programa:",
+    exportProgramName:"Nome do programa a exportar:", invalidFile:"Formato inválido",
+    importSuccess:"importado(s) com sucesso", noPrograms:"Nenhum programa salvo",
+    selectProgram:"Selecione um programa", importedFusion:"Programa importado (fusão UUID)",
+    importComplete:"Importação completa bem-sucedida.", cleanDone:"🧹 Limpo:", cleanNone:"Nenhum exercício inválido encontrado.",
+    seqCleaned:"⚠️ Sequência limpa (IDs inválidos removidos).", saved:"✓ Salvo",
+    progSaved:"Programa salvo", progDeleted:"Programa excluído", progLoaded:"carregado e reiniciado.",
+    allExported:"Todos os programas exportados.", noNewImported:"Nenhum novo programa importado.",
+    exercisesRemoved:"exercício(s) inválido(s) removido(s)."
+  },
+  zh: {
+    ready:"准备就绪", preparation:"准备", rest:"休息", work:"训练", tempo:"节奏",
+    nextExercise:"下一个动作", prev:"◀ 上一个", next:"下一个 ▶", start:"▶ 开始",
+    pause:"⏸ 暂停", reset:"⟳ 重置", config:"⚙ 设置", configTitle:"设置",
+    setupLabel:"准备时间（秒）:", voiceLabel:"语音合成",
+    sequenceLabel:"训练序列:", sequenceHelp:"示例：30x(4:10-P10)-P30-30x(11:10-P20)。格式：8:40（时长）或 8:6@3-0-1-0（节奏）。休息：P30。",
+    advancedTitle:"📁 程序管理（高级）", programsLabel:"已保存程序:",
+    saveProgram:"💾 保存", deleteProgram:"🗑 删除", exportProgram:"📤 导出序列",
+    importProgram:"📥 导入序列", exportWeek:"📄 导出文本", exportAllPrograms:"📦 全部导出",
+    importPrograms:"📥 导入程序", exportFull:"💾 导出配置", importFull:"📥 导入配置",
+    cleanExercises:"🧹 清理", exerciseListTitle:"📋 动作列表", addExercise:"+ 添加动作",
+    saveConfig:"💾 保存", finished:"完成！", completed:"已完成", wellDone:"做得好！",
+    workDuration:"训练（时长）", restDuration:"休息", tempoMode:"训练（节奏）",
+    setupPhase:"准备", pauseStatus:"⏸ 已暂停", pauseTempo:"⏸ 节奏暂停", resume:"继续",
+    blockLabel:"组", totalDuration:"总时长", loadProgram:"-- 加载程序 --",
+    confirmDelete:"删除", confirmOverwrite:"覆盖", programName:"程序名称:",
+    exportProgramName:"要导出的程序名称:", invalidFile:"无效格式",
+    importSuccess:"成功导入", noPrograms:"没有保存的程序",
+    selectProgram:"选择一个程序", importedFusion:"程序已导入（UUID合并）",
+    importComplete:"完整导入成功。", cleanDone:"🧹 已清理:", cleanNone:"未发现无效动作。",
+    seqCleaned:"⚠️ 序列已清理（已移除无效ID）。", saved:"✓ 已保存",
+    progSaved:"程序已保存", progDeleted:"程序已删除", progLoaded:"已加载并重置。",
+    allExported:"所有程序已导出。", noNewImported:"未导入新程序。",
+    exercisesRemoved:"已移除无效动作。"
+  },
+  ja: {
+    ready:"準備完了", preparation:"準備", rest:"休憩", work:"ワーク", tempo:"テンポ",
+    nextExercise:"次のエクササイズ", prev:"◀ 前へ", next:"次へ ▶", start:"▶ スタート",
+    pause:"⏸ 一時停止", reset:"⟳ リセット", config:"⚙ 設定", configTitle:"設定",
+    setupLabel:"準備（秒）:", voiceLabel:"音声合成",
+    sequenceLabel:"トレーニングシーケンス:", sequenceHelp:"例：30x(4:10-P10)-P30-30x(11:10-P20)。形式：8:40（時間）または 8:6@3-0-1-0（テンポ）。休憩：P30。",
+    advancedTitle:"📁 プログラム管理（上級）", programsLabel:"保存されたプログラム:",
+    saveProgram:"💾 保存", deleteProgram:"🗑 削除", exportProgram:"📤 シーケンスをエクスポート",
+    importProgram:"📥 シーケンスをインポート", exportWeek:"📄 テキストをエクスポート", exportAllPrograms:"📦 すべてエクスポート",
+    importPrograms:"📥 プログラムをインポート", exportFull:"💾 設定をエクスポート", importFull:"📥 設定をインポート",
+    cleanExercises:"🧹 クリーン", exerciseListTitle:"📋 エクササイズリスト", addExercise:"+ エクササイズを追加",
+    saveConfig:"💾 保存", finished:"終了！", completed:"完了", wellDone:"お疲れ様でした！",
+    workDuration:"ワーク（時間）", restDuration:"休憩", tempoMode:"ワーク（テンポ）",
+    setupPhase:"準備", pauseStatus:"⏸ 一時停止中", pauseTempo:"⏸ テンポ一時停止", resume:"再開",
+    blockLabel:"ブロック", totalDuration:"合計時間", loadProgram:"-- プログラムをロード --",
+    confirmDelete:"削除", confirmOverwrite:"上書き", programName:"プログラム名:",
+    exportProgramName:"エクスポートするプログラム名:", invalidFile:"無効な形式",
+    importSuccess:"正常にインポートされました", noPrograms:"保存されたプログラムはありません",
+    selectProgram:"プログラムを選択してください", importedFusion:"プログラムがインポートされました（UUIDマージ）",
+    importComplete:"完全なインポートに成功しました。", cleanDone:"🧹 クリーンしました:", cleanNone:"無効なエクササイズは見つかりませんでした。",
+    seqCleaned:"⚠️ シーケンスがクリーンされました（無効なIDを削除）。", saved:"✓ 保存されました",
+    progSaved:"プログラムが保存されました", progDeleted:"プログラムが削除されました", progLoaded:"ロードされ、リセットされました。",
+    allExported:"すべてのプログラムがエクスポートされました。", noNewImported:"新しいプログラムはインポートされませんでした。",
+    exercisesRemoved:"無効なエクササイズが削除されました。"
+  },
+  ko: {
+    ready:"준비 완료", preparation:"준비", rest:"휴식", work:"운동", tempo:"템포",
+    nextExercise:"다음 운동", prev:"◀ 이전", next:"다음 ▶", start:"▶ 시작",
+    pause:"⏸ 일시 정지", reset:"⟳ 초기화", config:"⚙ 설정", configTitle:"설정",
+    setupLabel:"준비 시간(초):", voiceLabel:"음성 합성",
+    sequenceLabel:"운동 시퀀스:", sequenceHelp:"예: 30x(4:10-P10)-P30-30x(11:10-P20). 형식: 8:40(시간) 또는 8:6@3-0-1-0(템포). 휴식: P30.",
+    advancedTitle:"📁 프로그램 관리(고급)", programsLabel:"저장된 프로그램:",
+    saveProgram:"💾 저장", deleteProgram:"🗑 삭제", exportProgram:"📤 시퀀스 내보내기",
+    importProgram:"📥 시퀀스 가져오기", exportWeek:"📄 텍스트 내보내기", exportAllPrograms:"📦 모두 내보내기",
+    importPrograms:"📥 프로그램 가져오기", exportFull:"💾 구성 내보내기", importFull:"📥 구성 가져오기",
+    cleanExercises:"🧹 정리", exerciseListTitle:"📋 운동 목록", addExercise:"+ 운동 추가",
+    saveConfig:"💾 저장", finished:"완료!", completed:"완료됨", wellDone:"잘했어요!",
+    workDuration:"운동(시간)", restDuration:"휴식", tempoMode:"운동(템포)",
+    setupPhase:"준비", pauseStatus:"⏸ 일시 정지됨", pauseTempo:"⏸ 템포 일시 정지", resume:"재개",
+    blockLabel:"블록", totalDuration:"총 시간", loadProgram:"-- 프로그램 로드 --",
+    confirmDelete:"삭제", confirmOverwrite:"덮어쓰기", programName:"프로그램 이름:",
+    exportProgramName:"내보낼 프로그램 이름:", invalidFile:"잘못된 형식",
+    importSuccess:"성공적으로 가져왔습니다", noPrograms:"저장된 프로그램 없음",
+    selectProgram:"프로그램 선택", importedFusion:"프로그램 가져옴(UUID 병합)",
+    importComplete:"전체 가져오기 성공.", cleanDone:"🧹 정리됨:", cleanNone:"잘못된 운동을 찾을 수 없음.",
+    seqCleaned:"⚠️ 시퀀스 정리됨(잘못된 ID 제거).", saved:"✓ 저장됨",
+    progSaved:"프로그램 저장됨", progDeleted:"프로그램 삭제됨", progLoaded:"로드 및 초기화됨.",
+    allExported:"모든 프로그램이 내보내졌습니다.", noNewImported:"새 프로그램이 가져오지 않았습니다.",
+    exercisesRemoved:"잘못된 운동이 제거되었습니다."
+  },
+  ar: {
+    ready:"جاهز", preparation:"تحضير", rest:"راحة", work:"عمل", tempo:"إيقاع",
+    nextExercise:"التمرين التالي", prev:"◀ السابق", next:"التالي ▶", start:"▶ ابدأ",
+    pause:"⏸ توقف مؤقت", reset:"⟳ إعادة تعيين", config:"⚙ إعدادات", configTitle:"الإعدادات",
+    setupLabel:"التحضير (ثواني):", voiceLabel:"تركيب الصوت",
+    sequenceLabel:"تسلسل التمرين:", sequenceHelp:"مثال: 30x(4:10-P10)-P30-30x(11:10-P20). الصيغ: 8:40 (مدة) أو 8:6@3-0-1-0 (إيقاع). الراحة: P30.",
+    advancedTitle:"📁 إدارة البرامج (متقدم)", programsLabel:"البرامج المحفوظة:",
+    saveProgram:"💾 حفظ", deleteProgram:"🗑 حذف", exportProgram:"📤 تصدير التسلسل",
+    importProgram:"📥 استيراد التسلسل", exportWeek:"📄 تصدير نص", exportAllPrograms:"📦 تصدير الكل",
+    importPrograms:"📥 استيراد البرامج", exportFull:"💾 تصدير الإعدادات", importFull:"📥 استيراد الإعدادات",
+    cleanExercises:"🧹 تنظيف", exerciseListTitle:"📋 قائمة التمارين", addExercise:"+ إضافة تمرين",
+    saveConfig:"💾 حفظ", finished:"انتهى!", completed:"مكتمل", wellDone:"أحسنت!",
+    workDuration:"عمل (مدة)", restDuration:"راحة", tempoMode:"عمل (إيقاع)",
+    setupPhase:"تحضير", pauseStatus:"⏸ متوقف مؤقت", pauseTempo:"⏸ إيقاع متوقف", resume:"استئناف",
+    blockLabel:"كتلة", totalDuration:"المدة الإجمالية", loadProgram:"-- تحميل برنامج --",
+    confirmDelete:"حذف", confirmOverwrite:"استبدال", programName:"اسم البرنامج:",
+    exportProgramName:"اسم البرنامج للتصدير:", invalidFile:"تنسيق غير صالح",
+    importSuccess:"تم الاستيراد بنجاح", noPrograms:"لا توجد برامج محفوظة",
+    selectProgram:"اختر برنامجاً", importedFusion:"تم استيراد البرنامج (دمج UUID)",
+    importComplete:"نجح الاستيراد الكامل.", cleanDone:"🧹 تم التنظيف:", cleanNone:"لم يتم العثور على تمارين غير صالحة.",
+    seqCleaned:"⚠️ تم تنظيف التسلسل (تمت إزالة المعرفات غير الصالحة).", saved:"✓ تم الحفظ",
+    progSaved:"تم حفظ البرنامج", progDeleted:"تم حذف البرنامج", progLoaded:"تم التحميل وإعادة التعيين.",
+    allExported:"تم تصدير جميع البرامج.", noNewImported:"لم يتم استيراد برامج جديدة.",
+    exercisesRemoved:"تمت إزالة التمرين (تمارين) غير الصالحة."
+  },
+  ru: {
+    ready:"Готов", preparation:"Подготовка", rest:"Отдых", work:"РАБОТА", tempo:"ТЕМП",
+    nextExercise:"Следующее упражнение", prev:"◀ Назад", next:"Вперёд ▶", start:"▶ Старт",
+    pause:"⏸ Пауза", reset:"⟳ Сброс", config:"⚙ Настройки", configTitle:"Настройки",
+    setupLabel:"Подготовка (сек):", voiceLabel:"Синтез речи",
+    sequenceLabel:"Последовательность тренировки:", sequenceHelp:"Пример: 30x(4:10-P10)-P30-30x(11:10-P20). Форматы: 8:40 (длительность) или 8:6@3-0-1-0 (темп). Отдых: P30.",
+    advancedTitle:"📁 Управление программами (расширенное)", programsLabel:"Сохранённые программы:",
+    saveProgram:"💾 Сохранить", deleteProgram:"🗑 Удалить", exportProgram:"📤 Экспорт последовательности",
+    importProgram:"📥 Импорт последовательности", exportWeek:"📄 Экспорт текста", exportAllPrograms:"📦 Экспорт всех",
+    importPrograms:"📥 Импорт программ", exportFull:"💾 Экспорт конфигурации", importFull:"📥 Импорт конфигурации",
+    cleanExercises:"🧹 Очистить", exerciseListTitle:"📋 Список упражнений", addExercise:"+ Добавить упражнение",
+    saveConfig:"💾 Сохранить", finished:"ГОТОВО!", completed:"Завершено", wellDone:"Отлично!",
+    workDuration:"РАБОТА (длительность)", restDuration:"ОТДЫХ", tempoMode:"РАБОТА (ТЕМП)",
+    setupPhase:"Подготовка", pauseStatus:"⏸ Пауза", pauseTempo:"⏸ Пауза темпа", resume:"Возобновить",
+    blockLabel:"Блок", totalDuration:"Общая длительность", loadProgram:"-- Загрузить программу --",
+    confirmDelete:"Удалить", confirmOverwrite:"Перезаписать", programName:"Имя программы:",
+    exportProgramName:"Имя программы для экспорта:", invalidFile:"Неверный формат",
+    importSuccess:"успешно импортировано", noPrograms:"Нет сохранённых программ",
+    selectProgram:"Выберите программу", importedFusion:"Программа импортирована (объединение UUID)",
+    importComplete:"Полный импорт успешен.", cleanDone:"🧹 Очищено:", cleanNone:"Не найдено недопустимых упражнений.",
+    seqCleaned:"⚠️ Последовательность очищена (удалены недопустимые ID).", saved:"✓ Сохранено",
+    progSaved:"Программа сохранена", progDeleted:"Программа удалена", progLoaded:"загружена и сброшена.",
+    allExported:"Все программы экспортированы.", noNewImported:"Новые программы не импортированы.",
+    exercisesRemoved:"недопустимое(ые) упражнение(я) удалено(ы)."
+  },
+  nl: {
+    ready:"Klaar", preparation:"Voorbereiding", rest:"Rust", work:"WERK", tempo:"TEMPO",
+    nextExercise:"Volgende oefening", prev:"◀ Vorige", next:"Volgende ▶", start:"▶ Start",
+    pause:"⏸ Pauze", reset:"⟳ Reset", config:"⚙ Instellingen", configTitle:"Instellingen",
+    setupLabel:"Voorbereiding (seconden):", voiceLabel:"Spraaksynthese",
+    sequenceLabel:"Trainingsreeks:", sequenceHelp:"Voorbeeld: 30x(4:10-P10)-P30-30x(11:10-P20). Formaten: 8:40 (duur) of 8:6@3-0-1-0 (tempo). Rust: P30.",
+    advancedTitle:"📁 Programma beheer (geavanceerd)", programsLabel:"Opgeslagen programma's:",
+    saveProgram:"💾 Opslaan", deleteProgram:"🗑 Verwijderen", exportProgram:"📤 Exporteer reeks",
+    importProgram:"📥 Importeer reeks", exportWeek:"📄 Exporteer tekst", exportAllPrograms:"📦 Exporteer alles",
+    importPrograms:"📥 Importeer programma's", exportFull:"💾 Exporteer configuratie", importFull:"📥 Importeer configuratie",
+    cleanExercises:"🧹 Opschonen", exerciseListTitle:"📋 Oefeningenlijst", addExercise:"+ Oefening toevoegen",
+    saveConfig:"💾 Opslaan", finished:"KLAAR!", completed:"Voltooid", wellDone:"Goed gedaan!",
+    workDuration:"WERK (duur)", restDuration:"RUST", tempoMode:"WERK (TEMPO)",
+    setupPhase:"Voorbereiding", pauseStatus:"⏸ Gepauzeerd", pauseTempo:"⏸ Tempo gepauzeerd", resume:"Hervatten",
+    blockLabel:"Blok", totalDuration:"Totale duur", loadProgram:"-- Laad programma --",
+    confirmDelete:"Verwijderen", confirmOverwrite:"Overschrijven", programName:"Programmanaam:",
+    exportProgramName:"Programmanaam om te exporteren:", invalidFile:"Ongeldig formaat",
+    importSuccess:"succesvol geïmporteerd", noPrograms:"Geen opgeslagen programma's",
+    selectProgram:"Selecteer een programma", importedFusion:"Programma geïmporteerd (UUID-samenvoeging)",
+    importComplete:"Volledige import geslaagd.", cleanDone:"🧹 Opgeschoond:", cleanNone:"Geen ongeldige oefeningen gevonden.",
+    seqCleaned:"⚠️ Reeks opgeschoond (ongeldige ID's verwijderd).", saved:"✓ Opgeslagen",
+    progSaved:"Programma opgeslagen", progDeleted:"Programma verwijderd", progLoaded:"geladen en gereset.",
+    allExported:"Alle programma's geëxporteerd.", noNewImported:"Geen nieuwe programma's geïmporteerd.",
+    exercisesRemoved:"ongeldige oefening(en) verwijderd."
+  },
+  pl: {
+    ready:"Gotowy", preparation:"Przygotowanie", rest:"Odpoczynek", work:"PRACA", tempo:"TEMPO",
+    nextExercise:"Następne ćwiczenie", prev:"◀ Poprzedni", next:"Następny ▶", start:"▶ Start",
+    pause:"⏸ Pauza", reset:"⟳ Resetuj", config:"⚙ Ustawienia", configTitle:"Ustawienia",
+    setupLabel:"Przygotowanie (sekundy):", voiceLabel:"Synteza mowy",
+    sequenceLabel:"Sekwencja treningowa:", sequenceHelp:"Przykład: 30x(4:10-P10)-P30-30x(11:10-P20). Formaty: 8:40 (czas) lub 8:6@3-0-1-0 (tempo). Odpoczynek: P30.",
+    advancedTitle:"📁 Zarządzanie programami (zaawansowane)", programsLabel:"Zapisane programy:",
+    saveProgram:"💾 Zapisz", deleteProgram:"🗑 Usuń", exportProgram:"📤 Eksportuj sekwencję",
+    importProgram:"📥 Importuj sekwencję", exportWeek:"📄 Eksportuj tekst", exportAllPrograms:"📦 Eksportuj wszystkie",
+    importPrograms:"📥 Importuj programy", exportFull:"💾 Eksportuj konfigurację", importFull:"📥 Importuj konfigurację",
+    cleanExercises:"🧹 Wyczyść", exerciseListTitle:"📋 Lista ćwiczeń", addExercise:"+ Dodaj ćwiczenie",
+    saveConfig:"💾 Zapisz", finished:"KONIEC!", completed:"Ukończono", wellDone:"Dobra robota!",
+    workDuration:"PRACA (czas)", restDuration:"ODPOCZYNEK", tempoMode:"PRACA (TEMPO)",
+    setupPhase:"Przygotowanie", pauseStatus:"⏸ Wstrzymano", pauseTempo:"⏸ Tempo wstrzymane", resume:"Wznów",
+    blockLabel:"Blok", totalDuration:"Całkowity czas", loadProgram:"-- Załaduj program --",
+    confirmDelete:"Usuń", confirmOverwrite:"Nadpisz", programName:"Nazwa programu:",
+    exportProgramName:"Nazwa programu do eksportu:", invalidFile:"Nieprawidłowy format",
+    importSuccess:"zaimportowano pomyślnie", noPrograms:"Brak zapisanych programów",
+    selectProgram:"Wybierz program", importedFusion:"Program zaimportowany (scalanie UUID)",
+    importComplete:"Pełny import zakończony sukcesem.", cleanDone:"🧹 Wyczyszczono:", cleanNone:"Nie znaleziono nieprawidłowych ćwiczeń.",
+    seqCleaned:"⚠️ Sekwencja wyczyszczona (usunięto nieprawidłowe ID).", saved:"✓ Zapisano",
+    progSaved:"Program zapisany", progDeleted:"Program usunięty", progLoaded:"załadowany i zresetowany.",
+    allExported:"Wszystkie programy wyeksportowane.", noNewImported:"Nie zaimportowano nowych programów.",
+    exercisesRemoved:"usunięto nieprawidłowe ćwiczenie(a)."
+  },
+  tr: {
+    ready:"Hazır", preparation:"Hazırlık", rest:"Dinlenme", work:"ÇALIŞMA", tempo:"TEMPO",
+    nextExercise:"Sonraki egzersiz", prev:"◀ Önceki", next:"Sonraki ▶", start:"▶ Başlat",
+    pause:"⏸ Duraklat", reset:"⟳ Sıfırla", config:"⚙ Ayarlar", configTitle:"Ayarlar",
+    setupLabel:"Hazırlık (saniye):", voiceLabel:"Ses sentezi",
+    sequenceLabel:"Antrenman sırası:", sequenceHelp:"Örnek: 30x(4:10-P10)-P30-30x(11:10-P20). Formatlar: 8:40 (süre) veya 8:6@3-0-1-0 (tempo). Dinlenme: P30.",
+    advancedTitle:"📁 Program yönetimi (gelişmiş)", programsLabel:"Kaydedilmiş programlar:",
+    saveProgram:"💾 Kaydet", deleteProgram:"🗑 Sil", exportProgram:"📤 Sırayı dışa aktar",
+    importProgram:"📥 Sırayı içe aktar", exportWeek:"📄 Metin olarak dışa aktar", exportAllPrograms:"📦 Tümünü dışa aktar",
+    importPrograms:"📥 Programları içe aktar", exportFull:"💾 Yapılandırmayı dışa aktar", importFull:"📥 Yapılandırmayı içe aktar",
+    cleanExercises:"🧹 Temizle", exerciseListTitle:"📋 Egzersiz listesi", addExercise:"+ Egzersiz ekle",
+    saveConfig:"💾 Kaydet", finished:"BİTTİ!", completed:"Tamamlandı", wellDone:"Tebrikler!",
+    workDuration:"ÇALIŞMA (süre)", restDuration:"DİNLENME", tempoMode:"ÇALIŞMA (TEMPO)",
+    setupPhase:"Hazırlık", pauseStatus:"⏸ Duraklatıldı", pauseTempo:"⏸ Tempo duraklatıldı", resume:"Devam et",
+    blockLabel:"Blok", totalDuration:"Toplam süre", loadProgram:"-- Program yükle --",
+    confirmDelete:"Sil", confirmOverwrite:"Üzerine yaz", programName:"Program adı:",
+    exportProgramName:"Dışa aktarılacak program adı:", invalidFile:"Geçersiz biçim",
+    importSuccess:"başarıyla içe aktarıldı", noPrograms:"Kaydedilmiş program yok",
+    selectProgram:"Bir program seçin", importedFusion:"Program içe aktarıldı (UUID birleştirme)",
+    importComplete:"Tam içe aktarma başarılı.", cleanDone:"🧹 Temizlendi:", cleanNone:"Geçersiz egzersiz bulunamadı.",
+    seqCleaned:"⚠️ Sıra temizlendi (geçersiz kimlikler kaldırıldı).", saved:"✓ Kaydedildi",
+    progSaved:"Program kaydedildi", progDeleted:"Program silindi", progLoaded:"yüklendi ve sıfırlandı.",
+    allExported:"Tüm programlar dışa aktarıldı.", noNewImported:"Yeni program içe aktarılmadı.",
+    exercisesRemoved:"geçersiz egzersiz(ler) kaldırıldı."
   }
 };
 
 const LANG_NAMES = {
-  fr:'French',en:'English',de:'German',es:'Spanish',it:'Italian',
-  pt:'Portuguese',zh:'Chinese (Simplified)',ja:'Japanese',ko:'Korean',
-  ar:'Arabic',ru:'Russian',nl:'Dutch',pl:'Polish',tr:'Turkish'
+  fr:'Français', en:'English', de:'Deutsch', es:'Español', it:'Italiano',
+  pt:'Português', zh:'中文', ja:'日本語', ko:'한국어',
+  ar:'العربية', ru:'Русский', nl:'Nederlands', pl:'Polski', tr:'Türkçe'
 };
 const VOICE_LANGS = {fr:'fr-FR',en:'en-US',de:'de-DE',es:'es-ES',it:'it-IT',pt:'pt-BR',zh:'zh-CN',ja:'ja-JP',ko:'ko-KR',ar:'ar-SA',ru:'ru-RU',nl:'nl-NL',pl:'pl-PL',tr:'tr-TR'};
 
 let currentLang = localStorage.getItem('chronoPro_lang') || 'fr';
 let currentTr = BASE_TR[currentLang] || BASE_TR['fr'];
-const trCache = {};
 
 function t(key){ return currentTr[key] || BASE_TR['fr'][key] || key; }
 
-// ===== TRADUCTION VIA API CLAUDE =====
-async function translateViaAPI(targetLangName){
-  const entries = Object.entries(BASE_TR['fr'])
-    .map(([k,v]) => `${k}|||${v}`)
-    .join('\n');
-
-  const resp = await fetch("https://api.anthropic.com/v1/messages", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      model:"claude-sonnet-4-20250514",
-      max_tokens:1500,
-      messages:[{role:"user",content:`Translate these fitness app UI strings from French to ${targetLangName}.
-RULES:
-- Keep emoji exactly as-is (◀▶⏸⟳⚙💾🗑📤📥📦📋🧹✓⚠️🌐)
-- Keep technical codes as-is: P30, UUID, 8:40, 3-0-1-0
-- Be concise — this is a mobile UI
-- Return ONLY lines in format: key|||translation
-- No explanation, no markdown, no extra text
-
-${entries}`}]
-    })
-  });
-  if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
-  const data = await resp.json();
-  const text = data.content.find(c=>c.type==='text')?.text || '';
-  const result = {};
-  text.split('\n').forEach(line=>{
-    const idx = line.indexOf('|||');
-    if(idx>0){ const k=line.slice(0,idx).trim(); const v=line.slice(idx+3).trim(); if(k&&v) result[k]=v; }
-  });
-  return result;
-}
-
-async function applyLang(langCode, langName){
-  const statusEl = document.getElementById('lang-status');
-  statusEl.style.display='inline';
-
-  if(BASE_TR[langCode]){
-    currentLang=langCode; currentTr=BASE_TR[langCode];
-    localStorage.setItem('chronoPro_lang',langCode);
-    localStorage.removeItem('chronoPro_customLangName');
-    applyTranslations();
-    statusEl.style.display='none';
-    return;
-  }
-
-  const cacheKey = langName.toLowerCase().trim();
-  if(trCache[cacheKey]){
-    currentLang='other'; currentTr=trCache[cacheKey];
-    localStorage.setItem('chronoPro_lang','other');
-    localStorage.setItem('chronoPro_customLangName',cacheKey);
-    localStorage.setItem('chronoPro_customTr',JSON.stringify(trCache[cacheKey]));
-    applyTranslations();
-    statusEl.textContent='✓ '+t('translateDone');
-    setTimeout(()=>statusEl.style.display='none',2000);
-    return;
-  }
-
-  statusEl.textContent='⏳ '+(currentTr.translateStatus||'Traduction en cours…');
-  try{
-    const translated = await translateViaAPI(langName);
-    trCache[cacheKey]=translated;
-    currentLang='other'; currentTr=translated;
-    localStorage.setItem('chronoPro_lang','other');
-    localStorage.setItem('chronoPro_customLangName',cacheKey);
-    localStorage.setItem('chronoPro_customTr',JSON.stringify(translated));
-    applyTranslations();
-    statusEl.textContent='✓ '+(translated.translateDone||'Translation applied ✓');
-    setTimeout(()=>statusEl.style.display='none',2500);
-  } catch(err){
-    console.error(err);
-    statusEl.textContent='❌ '+(currentTr.translateError||'Erreur');
-    setTimeout(()=>statusEl.style.display='none',3000);
-  }
-}
-
+// Application des traductions à l'interface
 function applyTranslations(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{
     if(el.children.length===0) el.innerText=t(el.dataset.i18n);
   });
   const progSel=document.getElementById('program-select');
   if(progSel&&progSel.options[0]) progSel.options[0].textContent=t('loadProgram');
-  const tBtn=document.getElementById('lang-translate-btn');
-  if(tBtn) tBtn.textContent=t('translateBtn');
   updateDisplay();
   updateTotalTimeDisplay();
+}
+
+// Changement de langue
+function setLanguage(langCode){
+  if(BASE_TR[langCode]){
+    currentLang=langCode;
+    currentTr=BASE_TR[langCode];
+    localStorage.setItem('chronoPro_lang',langCode);
+    applyTranslations();
+    if(window.speechSynthesis) window.speechSynthesis.cancel();
+    if(voiceEnabled && window.speechSynthesis) speak(t('ready'));
+  }
 }
 
 // ===== AUDIO =====
@@ -318,7 +536,7 @@ let isSetupPhase=true, currentBlockIndex=-1, timeLeft=0, timerInterval=null, isP
 let isTempoMode=false, tempoInterval=null, currentRep=0, currentPhase=0, tempoPhases=[0,0,0,0], tempoOriginal=[0,0,0,0], totalReps=0;
 let savedPrograms=[];
 
-// ===== PARSER =====
+// ===== PARSER (identique à l'original) =====
 function parseExToken(tok){ let m=tok.match(/^(\d+):(\d+)$/); if(m)return{type:'exercise',id:parseInt(m[1]),duration:parseInt(m[2])}; m=tok.match(/^(\d+):(\d+)@(\d+-\d+-\d+-\d+)$/); if(m)return{type:'exercise',id:parseInt(m[1]),reps:parseInt(m[2]),tempo:m[3]}; throw new Error(`Format: ${tok}`); }
 function parseSequence(input){
   try{
@@ -439,7 +657,7 @@ function nextBlock(){
   updateDisplay();
 }
 
-// ===== EXERCICES =====
+// ===== EXERCICES (identique) =====
 function getNextId(){ return exercises.length?Math.max(...exercises.map(e=>e.id))+1:1; }
 function addExercise(uid=null,name="Nouvel exo",reps="8-12",workTime=40,image=""){ exercises.push({id:getNextId(),uid:uid||uuid(),name,reps,workTime,image}); renderExercises();saveAll(); }
 function updateIdMapping(){ exercises.sort((a,b)=>a.id-b.id); let m={},nid=1; for(let ex of exercises){m[ex.id]=nid;ex.id=nid++;} let s=sequenceInputValue; for(let o in m)s=s.replace(new RegExp(`\\b${o}(?=:|@)`,'g'),m[o]); sequenceInputValue=s;document.getElementById("sequence-input").value=s;saveAll(); }
@@ -463,7 +681,7 @@ function renderExercises(){
 function cleanInvalidExercises(){ let b=exercises.length; exercises=exercises.filter(ex=>ex&&typeof ex.name==='string'&&ex.name.trim()!==''&&ex.name!=='undefined'&&ex.name!=='null'); if(exercises.length!==b){updateIdMapping();saveAll();showAutoSave(`${t('cleanDone')} ${b-exercises.length} ${t('exercisesRemoved')}`);renderExercises();}else showAutoSave(t('cleanNone')); }
 function cleanSequenceFromMissingIds(){ let blocks=parseSequence(sequenceInputValue),validIds=new Set(exercises.map(e=>e.id)),modified=false,nb=[]; for(let bl of blocks){if(bl.type==='exercise'&&!validIds.has(bl.id)){modified=true;continue;}nb.push(bl);} if(modified){let pts=[];for(let bl of nb){if(bl.type==='rest')pts.push(`P${bl.duration}`);else if(bl.duration!==undefined)pts.push(`${bl.id}:${bl.duration}`);else if(bl.tempo&&bl.reps)pts.push(`${bl.id}:${bl.reps}@${bl.tempo}`);}sequenceInputValue=pts.join('-');document.getElementById("sequence-input").value=sequenceInputValue;showAutoSave(t('seqCleaned'));saveAll();} }
 
-// ===== PROGRAMMES =====
+// ===== PROGRAMMES (identique) =====
 function loadSavedPrograms(){ let s=localStorage.getItem('chronoPro_savedPrograms'); savedPrograms=s?JSON.parse(s):[]; let sel=document.getElementById("program-select"); sel.innerHTML=`<option value="">${t('loadProgram')}</option>`; for(let p of savedPrograms){let o=document.createElement("option");o.value=p.name;o.textContent=p.name;sel.appendChild(o);} }
 function saveCurrentProgram(){ let ns=document.getElementById("sequence-input").value,nst=parseInt(document.getElementById("setup-time").value)||15; if(ns!==sequenceInputValue){sequenceInputValue=ns;setupTime=nst;} let name=prompt(t('programName'),"Mon programme"); if(!name)return; let ex=savedPrograms.find(p=>p.name===name); if(ex&&!confirm(`${t('confirmOverwrite')} "${name}" ?`))return; if(ex){ex.sequence=sequenceInputValue;ex.setupTime=setupTime;}else savedPrograms.push({name,sequence:sequenceInputValue,setupTime}); localStorage.setItem('chronoPro_savedPrograms',JSON.stringify(savedPrograms)); loadSavedPrograms();showAutoSave(t('progSaved')); }
 function deleteSelectedProgram(){ let sel=document.getElementById("program-select"),name=sel.value; if(!name){alert(t('selectProgram'));return;} if(!confirm(`${t('confirmDelete')} "${name}" ?`))return; savedPrograms=savedPrograms.filter(p=>p.name!==name); localStorage.setItem('chronoPro_savedPrograms',JSON.stringify(savedPrograms)); loadSavedPrograms();showAutoSave(t('progDeleted')); }
@@ -502,30 +720,10 @@ function init(){
   voiceEnabled=localStorage.getItem('chronoPro_voice')==='true';
 
   // Restaurer langue
-  const savedLang=localStorage.getItem('chronoPro_lang')||'fr';
-  const savedCustomName=localStorage.getItem('chronoPro_customLangName');
-  const savedCustomTr=localStorage.getItem('chronoPro_customTr');
-  if(BASE_TR[savedLang]){
-    currentLang=savedLang; currentTr=BASE_TR[savedLang];
-    document.getElementById("lang-select").value=savedLang;
-  } else if(savedCustomName&&savedCustomTr){
-    try{const parsed=JSON.parse(savedCustomTr);trCache[savedCustomName]=parsed;currentTr=parsed;currentLang='other';document.getElementById("lang-select").value='other';document.getElementById("lang-custom-input").style.display='inline';document.getElementById("lang-custom-input").value=savedCustomName;document.getElementById("lang-translate-btn").style.display='inline';document.getElementById("lang-status").textContent='✓';document.getElementById("lang-status").style.display='inline';}catch(e){}
-  }
-
-  // Sélecteur langue
-  document.getElementById("lang-select").addEventListener("change", async (e)=>{
-    const val=e.target.value;
-    const ci=document.getElementById("lang-custom-input"),tb=document.getElementById("lang-translate-btn");
-    if(val==='other'){ci.style.display='inline';tb.style.display='inline';ci.focus();}
-    else{ci.style.display='none';tb.style.display='none';await applyLang(val,LANG_NAMES[val]);}
-  });
-  document.getElementById("lang-translate-btn").addEventListener("click", async()=>{
-    const name=document.getElementById("lang-custom-input").value.trim();
-    if(name) await applyLang('other',name);
-  });
-  document.getElementById("lang-custom-input").addEventListener("keydown", async(e)=>{
-    if(e.key==='Enter'){const name=e.target.value.trim();if(name)await applyLang('other',name);}
-  });
+  const savedLang=localStorage.getItem('chronoPro_lang');
+  if(savedLang && BASE_TR[savedLang]) setLanguage(savedLang);
+  else setLanguage('fr');
+  document.getElementById("lang-select").value=currentLang;
 
   cleanSequenceFromMissingIds();
   document.getElementById("sequence-input").value=sequenceInputValue;
@@ -558,6 +756,8 @@ function init(){
   document.getElementById("clean-exercises-btn").onclick=()=>{cleanInvalidExercises();cleanSequenceFromMissingIds();resetWorkout();updateTotalTimeDisplay();};
   document.getElementById("export-all-programs-btn").onclick=exportAllPrograms;
   document.getElementById("import-programs-btn").onclick=()=>{let i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=e=>{if(e.target.files[0])importPrograms(e.target.files[0]);};i.click();};
+
+  document.getElementById("lang-select").addEventListener("change", (e)=>setLanguage(e.target.value));
 
   if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').then(r=>console.log('SW ok',r)).catch(e=>console.log('SW err',e));
 }
