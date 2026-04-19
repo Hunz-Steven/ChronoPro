@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-<title>Chrono Pro V9.20 – PWA & multilingue</title>
+<title>Chrono Pro V9.30 – PWA & multilingue (sans voix)</title>
 <link rel="manifest" href="manifest.json">
 <style>
   *{box-sizing:border-box;}
@@ -79,7 +79,7 @@
   <button id="reset-btn" data-i18n="reset">⟳ Réinitialiser</button>
   <button id="config-btn" data-i18n="config">⚙ Configurer</button>
   <div id="autosave-status"></div>
-  <div class="version">Chrono Pro V9.20</div>
+  <div class="version">Chrono Pro V9.30</div>
 </div>
 
 <div id="config-panel" class="config-panel">
@@ -87,12 +87,6 @@
   <div style="margin-bottom:10px">
     <label for="setup-time" data-i18n="setupLabel">Mise en place (secondes) :</label>
     <input type="number" id="setup-time" value="15" min="0" style="margin-left:8px;width:70px">
-  </div>
-  <div>
-    <label for="voice-toggle">
-      <input type="checkbox" id="voice-toggle">
-      <span data-i18n="voiceLabel">Synthèse vocale</span>
-    </label>
   </div>
   <div style="margin-top:15px">
     <label for="sequence-input"><strong data-i18n="sequenceLabel">Séquence d'entraînement :</strong></label>
@@ -130,13 +124,13 @@
 </div>
 
 <script>
-// ===== TRADUCTIONS COMPLÈTES POUR 15 LANGUES =====
+// ===== TRADUCTIONS COMPLÈTES 15 LANGUES (sans voix) =====
 const BASE_TR = {
   fr: {
     ready:"Prêt", preparation:"Préparation", rest:"Repos", work:"TRAVAIL", tempo:"TEMPO",
     nextExercise:"Prochain exercice", prev:"◀ Précédent", next:"Suivant ▶", start:"▶ Démarrer",
     pause:"⏸ Pause", reset:"⟳ Réinitialiser", config:"⚙ Configurer", configTitle:"Configuration",
-    setupLabel:"Mise en place (secondes) :", voiceLabel:"Synthèse vocale",
+    setupLabel:"Mise en place (secondes) :",
     sequenceLabel:"Séquence d'entraînement :",
     sequenceHelp:"Exemple : 30x(4:10-P10)-P30-30x(11:10-P20). Formats : 8:40 (durée) ou 8:6@3-0-1-0 (tempo). Repos : P30.",
     advancedTitle:"📁 Gestion des programmes (avancé)", programsLabel:"Programmes sauvegardés :",
@@ -162,7 +156,7 @@ const BASE_TR = {
     ready:"Ready", preparation:"Setup", rest:"Rest", work:"WORK", tempo:"TEMPO",
     nextExercise:"Next exercise", prev:"◀ Previous", next:"Next ▶", start:"▶ Start",
     pause:"⏸ Pause", reset:"⟳ Reset", config:"⚙ Settings", configTitle:"Settings",
-    setupLabel:"Setup (seconds):", voiceLabel:"Voice synthesis",
+    setupLabel:"Setup (seconds):",
     sequenceLabel:"Training sequence:",
     sequenceHelp:"Example: 30x(4:10-P10)-P30-30x(11:10-P20). Formats: 8:40 (duration) or 8:6@3-0-1-0 (tempo). Rest: P30.",
     advancedTitle:"📁 Program management (advanced)", programsLabel:"Saved programs:",
@@ -188,7 +182,7 @@ const BASE_TR = {
     ready:"Bereit", preparation:"Vorbereitung", rest:"Pause", work:"ARBEIT", tempo:"TEMPO",
     nextExercise:"Nächste Übung", prev:"◀ Zurück", next:"Weiter ▶", start:"▶ Start",
     pause:"⏸ Pause", reset:"⟳ Zurücksetzen", config:"⚙ Einstellungen", configTitle:"Einstellungen",
-    setupLabel:"Vorbereitung (Sek.):", voiceLabel:"Sprachausgabe",
+    setupLabel:"Vorbereitung (Sek.):",
     sequenceLabel:"Trainingssequenz:", sequenceHelp:"Beispiel: 30x(4:10-P10)-P30-30x(11:10-P20). Formate: 8:40 (Dauer) oder 8:6@3-0-1-0 (Tempo). Pause: P30.",
     advancedTitle:"📁 Programmverwaltung (erweitert)", programsLabel:"Gespeicherte Programme:",
     saveProgram:"💾 Speichern", deleteProgram:"🗑 Löschen", exportProgram:"📤 Sequenz exportieren",
@@ -213,7 +207,7 @@ const BASE_TR = {
     ready:"Listo", preparation:"Preparación", rest:"Descanso", work:"TRABAJO", tempo:"TEMPO",
     nextExercise:"Siguiente ejercicio", prev:"◀ Anterior", next:"Siguiente ▶", start:"▶ Iniciar",
     pause:"⏸ Pausa", reset:"⟳ Reiniciar", config:"⚙ Configurar", configTitle:"Configuración",
-    setupLabel:"Preparación (segundos):", voiceLabel:"Síntesis de voz",
+    setupLabel:"Preparación (segundos):",
     sequenceLabel:"Secuencia de entrenamiento:", sequenceHelp:"Ejemplo: 30x(4:10-P10)-P30-30x(11:10-P20). Formatos: 8:40 (duración) o 8:6@3-0-1-0 (tempo). Descanso: P30.",
     advancedTitle:"📁 Gestión de programas (avanzado)", programsLabel:"Programas guardados:",
     saveProgram:"💾 Guardar", deleteProgram:"🗑 Eliminar", exportProgram:"📤 Exportar secuencia",
@@ -238,7 +232,7 @@ const BASE_TR = {
     ready:"Pronto", preparation:"Preparazione", rest:"Riposo", work:"LAVORO", tempo:"TEMPO",
     nextExercise:"Prossimo esercizio", prev:"◀ Precedente", next:"Prossimo ▶", start:"▶ Avvia",
     pause:"⏸ Pausa", reset:"⟳ Reimposta", config:"⚙ Impostazioni", configTitle:"Impostazioni",
-    setupLabel:"Preparazione (secondi):", voiceLabel:"Sintesi vocale",
+    setupLabel:"Preparazione (secondi):",
     sequenceLabel:"Sequenza di allenamento:", sequenceHelp:"Esempio: 30x(4:10-P10)-P30-30x(11:10-P20). Formati: 8:40 (durata) o 8:6@3-0-1-0 (tempo). Riposo: P30.",
     advancedTitle:"📁 Gestione programmi (avanzato)", programsLabel:"Programmi salvati:",
     saveProgram:"💾 Salva", deleteProgram:"🗑 Elimina", exportProgram:"📤 Esporta sequenza",
@@ -263,7 +257,7 @@ const BASE_TR = {
     ready:"Pronto", preparation:"Preparação", rest:"Descanso", work:"TRABALHO", tempo:"TEMPO",
     nextExercise:"Próximo exercício", prev:"◀ Anterior", next:"Próximo ▶", start:"▶ Iniciar",
     pause:"⏸ Pausa", reset:"⟳ Reiniciar", config:"⚙ Configurar", configTitle:"Configuração",
-    setupLabel:"Preparação (segundos):", voiceLabel:"Síntese de voz",
+    setupLabel:"Preparação (segundos):",
     sequenceLabel:"Sequência de treino:", sequenceHelp:"Exemplo: 30x(4:10-P10)-P30-30x(11:10-P20). Formatos: 8:40 (duração) ou 8:6@3-0-1-0 (tempo). Descanso: P30.",
     advancedTitle:"📁 Gestão de programas (avançado)", programsLabel:"Programas salvos:",
     saveProgram:"💾 Salvar", deleteProgram:"🗑 Excluir", exportProgram:"📤 Exportar sequência",
@@ -288,7 +282,7 @@ const BASE_TR = {
     ready:"准备就绪", preparation:"准备", rest:"休息", work:"训练", tempo:"节奏",
     nextExercise:"下一个动作", prev:"◀ 上一个", next:"下一个 ▶", start:"▶ 开始",
     pause:"⏸ 暂停", reset:"⟳ 重置", config:"⚙ 设置", configTitle:"设置",
-    setupLabel:"准备时间（秒）:", voiceLabel:"语音合成",
+    setupLabel:"准备时间（秒）:",
     sequenceLabel:"训练序列:", sequenceHelp:"示例：30x(4:10-P10)-P30-30x(11:10-P20)。格式：8:40（时长）或 8:6@3-0-1-0（节奏）。休息：P30。",
     advancedTitle:"📁 程序管理（高级）", programsLabel:"已保存程序:",
     saveProgram:"💾 保存", deleteProgram:"🗑 删除", exportProgram:"📤 导出序列",
@@ -313,7 +307,7 @@ const BASE_TR = {
     ready:"準備完了", preparation:"準備", rest:"休憩", work:"ワーク", tempo:"テンポ",
     nextExercise:"次のエクササイズ", prev:"◀ 前へ", next:"次へ ▶", start:"▶ スタート",
     pause:"⏸ 一時停止", reset:"⟳ リセット", config:"⚙ 設定", configTitle:"設定",
-    setupLabel:"準備（秒）:", voiceLabel:"音声合成",
+    setupLabel:"準備（秒）:",
     sequenceLabel:"トレーニングシーケンス:", sequenceHelp:"例：30x(4:10-P10)-P30-30x(11:10-P20)。形式：8:40（時間）または 8:6@3-0-1-0（テンポ）。休憩：P30。",
     advancedTitle:"📁 プログラム管理（上級）", programsLabel:"保存されたプログラム:",
     saveProgram:"💾 保存", deleteProgram:"🗑 削除", exportProgram:"📤 シーケンスをエクスポート",
@@ -338,7 +332,7 @@ const BASE_TR = {
     ready:"준비 완료", preparation:"준비", rest:"휴식", work:"운동", tempo:"템포",
     nextExercise:"다음 운동", prev:"◀ 이전", next:"다음 ▶", start:"▶ 시작",
     pause:"⏸ 일시 정지", reset:"⟳ 초기화", config:"⚙ 설정", configTitle:"설정",
-    setupLabel:"준비 시간(초):", voiceLabel:"음성 합성",
+    setupLabel:"준비 시간(초):",
     sequenceLabel:"운동 시퀀스:", sequenceHelp:"예: 30x(4:10-P10)-P30-30x(11:10-P20). 형식: 8:40(시간) 또는 8:6@3-0-1-0(템포). 휴식: P30.",
     advancedTitle:"📁 프로그램 관리(고급)", programsLabel:"저장된 프로그램:",
     saveProgram:"💾 저장", deleteProgram:"🗑 삭제", exportProgram:"📤 시퀀스 내보내기",
@@ -363,7 +357,7 @@ const BASE_TR = {
     ready:"جاهز", preparation:"تحضير", rest:"راحة", work:"عمل", tempo:"إيقاع",
     nextExercise:"التمرين التالي", prev:"◀ السابق", next:"التالي ▶", start:"▶ ابدأ",
     pause:"⏸ توقف مؤقت", reset:"⟳ إعادة تعيين", config:"⚙ إعدادات", configTitle:"الإعدادات",
-    setupLabel:"التحضير (ثواني):", voiceLabel:"تركيب الصوت",
+    setupLabel:"التحضير (ثواني):",
     sequenceLabel:"تسلسل التمرين:", sequenceHelp:"مثال: 30x(4:10-P10)-P30-30x(11:10-P20). الصيغ: 8:40 (مدة) أو 8:6@3-0-1-0 (إيقاع). الراحة: P30.",
     advancedTitle:"📁 إدارة البرامج (متقدم)", programsLabel:"البرامج المحفوظة:",
     saveProgram:"💾 حفظ", deleteProgram:"🗑 حذف", exportProgram:"📤 تصدير التسلسل",
@@ -388,7 +382,7 @@ const BASE_TR = {
     ready:"Готов", preparation:"Подготовка", rest:"Отдых", work:"РАБОТА", tempo:"ТЕМП",
     nextExercise:"Следующее упражнение", prev:"◀ Назад", next:"Вперёд ▶", start:"▶ Старт",
     pause:"⏸ Пауза", reset:"⟳ Сброс", config:"⚙ Настройки", configTitle:"Настройки",
-    setupLabel:"Подготовка (сек):", voiceLabel:"Синтез речи",
+    setupLabel:"Подготовка (сек):",
     sequenceLabel:"Последовательность тренировки:", sequenceHelp:"Пример: 30x(4:10-P10)-P30-30x(11:10-P20). Форматы: 8:40 (длительность) или 8:6@3-0-1-0 (темп). Отдых: P30.",
     advancedTitle:"📁 Управление программами (расширенное)", programsLabel:"Сохранённые программы:",
     saveProgram:"💾 Сохранить", deleteProgram:"🗑 Удалить", exportProgram:"📤 Экспорт последовательности",
@@ -413,7 +407,7 @@ const BASE_TR = {
     ready:"Klaar", preparation:"Voorbereiding", rest:"Rust", work:"WERK", tempo:"TEMPO",
     nextExercise:"Volgende oefening", prev:"◀ Vorige", next:"Volgende ▶", start:"▶ Start",
     pause:"⏸ Pauze", reset:"⟳ Reset", config:"⚙ Instellingen", configTitle:"Instellingen",
-    setupLabel:"Voorbereiding (seconden):", voiceLabel:"Spraaksynthese",
+    setupLabel:"Voorbereiding (seconden):",
     sequenceLabel:"Trainingsreeks:", sequenceHelp:"Voorbeeld: 30x(4:10-P10)-P30-30x(11:10-P20). Formaten: 8:40 (duur) of 8:6@3-0-1-0 (tempo). Rust: P30.",
     advancedTitle:"📁 Programma beheer (geavanceerd)", programsLabel:"Opgeslagen programma's:",
     saveProgram:"💾 Opslaan", deleteProgram:"🗑 Verwijderen", exportProgram:"📤 Exporteer reeks",
@@ -438,7 +432,7 @@ const BASE_TR = {
     ready:"Gotowy", preparation:"Przygotowanie", rest:"Odpoczynek", work:"PRACA", tempo:"TEMPO",
     nextExercise:"Następne ćwiczenie", prev:"◀ Poprzedni", next:"Następny ▶", start:"▶ Start",
     pause:"⏸ Pauza", reset:"⟳ Resetuj", config:"⚙ Ustawienia", configTitle:"Ustawienia",
-    setupLabel:"Przygotowanie (sekundy):", voiceLabel:"Synteza mowy",
+    setupLabel:"Przygotowanie (sekundy):",
     sequenceLabel:"Sekwencja treningowa:", sequenceHelp:"Przykład: 30x(4:10-P10)-P30-30x(11:10-P20). Formaty: 8:40 (czas) lub 8:6@3-0-1-0 (tempo). Odpoczynek: P30.",
     advancedTitle:"📁 Zarządzanie programami (zaawansowane)", programsLabel:"Zapisane programy:",
     saveProgram:"💾 Zapisz", deleteProgram:"🗑 Usuń", exportProgram:"📤 Eksportuj sekwencję",
@@ -463,7 +457,7 @@ const BASE_TR = {
     ready:"Hazır", preparation:"Hazırlık", rest:"Dinlenme", work:"ÇALIŞMA", tempo:"TEMPO",
     nextExercise:"Sonraki egzersiz", prev:"◀ Önceki", next:"Sonraki ▶", start:"▶ Başlat",
     pause:"⏸ Duraklat", reset:"⟳ Sıfırla", config:"⚙ Ayarlar", configTitle:"Ayarlar",
-    setupLabel:"Hazırlık (saniye):", voiceLabel:"Ses sentezi",
+    setupLabel:"Hazırlık (saniye):",
     sequenceLabel:"Antrenman sırası:", sequenceHelp:"Örnek: 30x(4:10-P10)-P30-30x(11:10-P20). Formatlar: 8:40 (süre) veya 8:6@3-0-1-0 (tempo). Dinlenme: P30.",
     advancedTitle:"📁 Program yönetimi (gelişmiş)", programsLabel:"Kaydedilmiş programlar:",
     saveProgram:"💾 Kaydet", deleteProgram:"🗑 Sil", exportProgram:"📤 Sırayı dışa aktar",
@@ -486,19 +480,11 @@ const BASE_TR = {
   }
 };
 
-const LANG_NAMES = {
-  fr:'Français', en:'English', de:'Deutsch', es:'Español', it:'Italiano',
-  pt:'Português', zh:'中文', ja:'日本語', ko:'한국어',
-  ar:'العربية', ru:'Русский', nl:'Nederlands', pl:'Polski', tr:'Türkçe'
-};
-const VOICE_LANGS = {fr:'fr-FR',en:'en-US',de:'de-DE',es:'es-ES',it:'it-IT',pt:'pt-BR',zh:'zh-CN',ja:'ja-JP',ko:'ko-KR',ar:'ar-SA',ru:'ru-RU',nl:'nl-NL',pl:'pl-PL',tr:'tr-TR'};
-
 let currentLang = localStorage.getItem('chronoPro_lang') || 'fr';
-let currentTr = BASE_TR[currentLang] || BASE_TR['fr'];
+let currentTr = BASE_TR[currentLang];
 
 function t(key){ return currentTr[key] || BASE_TR['fr'][key] || key; }
 
-// Application des traductions à l'interface
 function applyTranslations(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{
     if(el.children.length===0) el.innerText=t(el.dataset.i18n);
@@ -509,23 +495,19 @@ function applyTranslations(){
   updateTotalTimeDisplay();
 }
 
-// Changement de langue
 function setLanguage(langCode){
   if(BASE_TR[langCode]){
     currentLang=langCode;
     currentTr=BASE_TR[langCode];
     localStorage.setItem('chronoPro_lang',langCode);
     applyTranslations();
-    if(window.speechSynthesis) window.speechSynthesis.cancel();
-    if(voiceEnabled && window.speechSynthesis) speak(t('ready'));
   }
 }
 
-// ===== AUDIO =====
-let audioCtx=null, lastBeepTime=0, voiceEnabled=false;
+// ===== AUDIO (seulement les bips) =====
+let audioCtx=null, lastBeepTime=0;
 function getAudioContext(){ if(!audioCtx){ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); document.body.addEventListener('touchstart',()=>audioCtx.resume(),{once:true}); document.body.addEventListener('click',()=>audioCtx.resume(),{once:true}); } return audioCtx; }
 function beep(freq=800,dur=200){ try{ let now=Date.now(); if(now-lastBeepTime<50)return; lastBeepTime=now; let ctx=getAudioContext(); let o=ctx.createOscillator(); let g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value=freq; o.type='sine'; g.gain.setValueAtTime(0.001,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.4,ctx.currentTime+0.01); g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur/1000); o.start(); o.stop(ctx.currentTime+dur/1000); }catch(e){} }
-function speak(txt){ if(!voiceEnabled||!window.speechSynthesis)return; try{window.speechSynthesis.cancel();}catch(e){} let u=new SpeechSynthesisUtterance(txt); u.lang=VOICE_LANGS[currentLang]||'fr-FR'; u.rate=0.85; window.speechSynthesis.speak(u); }
 
 // ===== UUID =====
 function uuid(){ return 'xxxx-4xxx-yxxx'.replace(/[xy]/g,c=>{let r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);return v.toString(16);}); }
@@ -536,7 +518,7 @@ let isSetupPhase=true, currentBlockIndex=-1, timeLeft=0, timerInterval=null, isP
 let isTempoMode=false, tempoInterval=null, currentRep=0, currentPhase=0, tempoPhases=[0,0,0,0], tempoOriginal=[0,0,0,0], totalReps=0;
 let savedPrograms=[];
 
-// ===== PARSER (identique à l'original) =====
+// ===== PARSER (identique) =====
 function parseExToken(tok){ let m=tok.match(/^(\d+):(\d+)$/); if(m)return{type:'exercise',id:parseInt(m[1]),duration:parseInt(m[2])}; m=tok.match(/^(\d+):(\d+)@(\d+-\d+-\d+-\d+)$/); if(m)return{type:'exercise',id:parseInt(m[1]),reps:parseInt(m[2]),tempo:m[3]}; throw new Error(`Format: ${tok}`); }
 function parseSequence(input){
   try{
@@ -622,7 +604,7 @@ function advanceBlock(){
 }
 function timerTick(){ if(isPaused)return; if(timeLeft<=5&&timeLeft>0)beep(440+timeLeft*80,120); if(timeLeft>0){timeLeft--;document.getElementById("timer").innerHTML=formatMMSS(timeLeft);return;} if(isSetupPhase){isSetupPhase=false;currentBlockIndex=-1;beep(1000,500);}advanceBlock(); }
 function startWorkout(){
-  getAudioContext(); if(window.speechSynthesis)window.speechSynthesis.cancel();
+  getAudioContext();
   if(isPaused){isPaused=false;if(isTempoMode&&tempoInterval===null)tempoInterval=setInterval(tempoTick,1000);else if(!isTempoMode&&timerInterval===null)timerInterval=setInterval(timerTick,1000);document.getElementById("start-btn").innerHTML=t('start');updateDisplay();return;}
   if((isTempoMode&&tempoInterval!==null)||(!isTempoMode&&timerInterval!==null))return;
   if(isSetupPhase){resetWorkoutInternal();timerInterval=setInterval(timerTick,1000);updateDisplay();document.getElementById("start-btn").innerHTML=t('start');return;}
@@ -657,7 +639,7 @@ function nextBlock(){
   updateDisplay();
 }
 
-// ===== EXERCICES (identique) =====
+// ===== EXERCICES =====
 function getNextId(){ return exercises.length?Math.max(...exercises.map(e=>e.id))+1:1; }
 function addExercise(uid=null,name="Nouvel exo",reps="8-12",workTime=40,image=""){ exercises.push({id:getNextId(),uid:uid||uuid(),name,reps,workTime,image}); renderExercises();saveAll(); }
 function updateIdMapping(){ exercises.sort((a,b)=>a.id-b.id); let m={},nid=1; for(let ex of exercises){m[ex.id]=nid;ex.id=nid++;} let s=sequenceInputValue; for(let o in m)s=s.replace(new RegExp(`\\b${o}(?=:|@)`,'g'),m[o]); sequenceInputValue=s;document.getElementById("sequence-input").value=s;saveAll(); }
@@ -681,7 +663,7 @@ function renderExercises(){
 function cleanInvalidExercises(){ let b=exercises.length; exercises=exercises.filter(ex=>ex&&typeof ex.name==='string'&&ex.name.trim()!==''&&ex.name!=='undefined'&&ex.name!=='null'); if(exercises.length!==b){updateIdMapping();saveAll();showAutoSave(`${t('cleanDone')} ${b-exercises.length} ${t('exercisesRemoved')}`);renderExercises();}else showAutoSave(t('cleanNone')); }
 function cleanSequenceFromMissingIds(){ let blocks=parseSequence(sequenceInputValue),validIds=new Set(exercises.map(e=>e.id)),modified=false,nb=[]; for(let bl of blocks){if(bl.type==='exercise'&&!validIds.has(bl.id)){modified=true;continue;}nb.push(bl);} if(modified){let pts=[];for(let bl of nb){if(bl.type==='rest')pts.push(`P${bl.duration}`);else if(bl.duration!==undefined)pts.push(`${bl.id}:${bl.duration}`);else if(bl.tempo&&bl.reps)pts.push(`${bl.id}:${bl.reps}@${bl.tempo}`);}sequenceInputValue=pts.join('-');document.getElementById("sequence-input").value=sequenceInputValue;showAutoSave(t('seqCleaned'));saveAll();} }
 
-// ===== PROGRAMMES (identique) =====
+// ===== PROGRAMMES =====
 function loadSavedPrograms(){ let s=localStorage.getItem('chronoPro_savedPrograms'); savedPrograms=s?JSON.parse(s):[]; let sel=document.getElementById("program-select"); sel.innerHTML=`<option value="">${t('loadProgram')}</option>`; for(let p of savedPrograms){let o=document.createElement("option");o.value=p.name;o.textContent=p.name;sel.appendChild(o);} }
 function saveCurrentProgram(){ let ns=document.getElementById("sequence-input").value,nst=parseInt(document.getElementById("setup-time").value)||15; if(ns!==sequenceInputValue){sequenceInputValue=ns;setupTime=nst;} let name=prompt(t('programName'),"Mon programme"); if(!name)return; let ex=savedPrograms.find(p=>p.name===name); if(ex&&!confirm(`${t('confirmOverwrite')} "${name}" ?`))return; if(ex){ex.sequence=sequenceInputValue;ex.setupTime=setupTime;}else savedPrograms.push({name,sequence:sequenceInputValue,setupTime}); localStorage.setItem('chronoPro_savedPrograms',JSON.stringify(savedPrograms)); loadSavedPrograms();showAutoSave(t('progSaved')); }
 function deleteSelectedProgram(){ let sel=document.getElementById("program-select"),name=sel.value; if(!name){alert(t('selectProgram'));return;} if(!confirm(`${t('confirmDelete')} "${name}" ?`))return; savedPrograms=savedPrograms.filter(p=>p.name!==name); localStorage.setItem('chronoPro_savedPrograms',JSON.stringify(savedPrograms)); loadSavedPrograms();showAutoSave(t('progDeleted')); }
@@ -691,15 +673,14 @@ function importProgramFile(file){ let reader=new FileReader(); reader.onload=ev=
 function exportAllPrograms(){ if(!savedPrograms.length){alert(t('noPrograms'));return;} let blob=new Blob([JSON.stringify(savedPrograms.map(p=>({name:p.name,sequence:p.sequence,setupTime:p.setupTime})),null,2)],{type:'application/json'}); let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`tous_programmes_${new Date().toISOString().slice(0,19)}.json`;a.click();URL.revokeObjectURL(blob.href);showAutoSave(t('allExported')); }
 function importPrograms(file){ let reader=new FileReader(); reader.onload=ev=>{try{let imp=JSON.parse(ev.target.result);if(!Array.isArray(imp))throw new Error(t('invalidFile'));let count=0;for(let prog of imp){if(!prog.name||!prog.sequence)continue;let ex2=savedPrograms.find(p=>p.name===prog.name);if(ex2){if(confirm(`${t('confirmOverwrite')} "${prog.name}" ?`)){ex2.sequence=prog.sequence;ex2.setupTime=prog.setupTime||15;count++;}}else{savedPrograms.push({name:prog.name,sequence:prog.sequence,setupTime:prog.setupTime||15});count++;}}if(count>0){localStorage.setItem('chronoPro_savedPrograms',JSON.stringify(savedPrograms));loadSavedPrograms();showAutoSave(`${count} ${t('importSuccess')}`);}else showAutoSave(t('noNewImported'));}catch(err){alert("Erreur: "+err.message);}};reader.readAsText(file); }
 function exportWeekText(){ let tt=totalTime(),content=`=== ${t('configTitle')} ===\n\n${t('sequenceLabel')}\n${sequenceInputValue}\n\n${t('totalDuration')} : ${Math.floor(tt/60)}m ${tt%60}s\n\n`; let blocks=parseSequence(sequenceInputValue),usedIds=new Set(); for(let b of blocks)if(b.type==='exercise')usedIds.add(b.id); for(let id of usedIds){let ex=getExerciseById(id);if(ex)content+=`- [${id}] ${ex.name} (${ex.reps}) - ${ex.workTime}s\n`;} let blob=new Blob([content],{type:'text/plain'}); let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`semaine_${new Date().toISOString().slice(0,10)}.txt`;a.click();URL.revokeObjectURL(blob.href); }
-function exportFull(){ let blob=new Blob([JSON.stringify({exercises,sequence:sequenceInputValue,setupTime,voiceEnabled,savedPrograms},null,2)],{type:'application/json'}); let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`chrono_full_${new Date().toISOString().slice(0,19)}.json`;a.click();URL.revokeObjectURL(blob.href); }
-function importFull(file){ let reader=new FileReader(); reader.onload=ev=>{try{let data=JSON.parse(ev.target.result);exercises=data.exercises||[];sequenceInputValue=data.sequence||sequenceInputValue;setupTime=data.setupTime||setupTime;voiceEnabled=data.voiceEnabled||false;savedPrograms=data.savedPrograms||[];localStorage.setItem('chronoPro_exercises',JSON.stringify(exercises));localStorage.setItem('chronoPro_sequence',sequenceInputValue);localStorage.setItem('chronoPro_setupTime',setupTime);localStorage.setItem('chronoPro_voice',voiceEnabled);localStorage.setItem('chronoPro_savedPrograms',JSON.stringify(savedPrograms));renderExercises();document.getElementById("sequence-input").value=sequenceInputValue;document.getElementById("setup-time").value=setupTime;document.getElementById("voice-toggle").checked=voiceEnabled;loadSavedPrograms();resetWorkout();updateTotalTimeDisplay();alert(t('importComplete'));}catch(err){alert(t('invalidFile')+": "+err.message);}};reader.readAsText(file); }
+function exportFull(){ let blob=new Blob([JSON.stringify({exercises,sequence:sequenceInputValue,setupTime,voiceEnabled:false,savedPrograms},null,2)],{type:'application/json'}); let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`chrono_full_${new Date().toISOString().slice(0,19)}.json`;a.click();URL.revokeObjectURL(blob.href); }
+function importFull(file){ let reader=new FileReader(); reader.onload=ev=>{try{let data=JSON.parse(ev.target.result);exercises=data.exercises||[];sequenceInputValue=data.sequence||sequenceInputValue;setupTime=data.setupTime||setupTime;voiceEnabled=false;savedPrograms=data.savedPrograms||[];localStorage.setItem('chronoPro_exercises',JSON.stringify(exercises));localStorage.setItem('chronoPro_sequence',sequenceInputValue);localStorage.setItem('chronoPro_setupTime',setupTime);localStorage.setItem('chronoPro_savedPrograms',JSON.stringify(savedPrograms));renderExercises();document.getElementById("sequence-input").value=sequenceInputValue;document.getElementById("setup-time").value=setupTime;loadSavedPrograms();resetWorkout();updateTotalTimeDisplay();alert(t('importComplete'));}catch(err){alert(t('invalidFile')+": "+err.message);}};reader.readAsText(file); }
 
-function saveAll(){ localStorage.setItem('chronoPro_exercises',JSON.stringify(exercises));localStorage.setItem('chronoPro_sequence',sequenceInputValue);localStorage.setItem('chronoPro_setupTime',setupTime);localStorage.setItem('chronoPro_voice',voiceEnabled);updateTotalTimeDisplay();showAutoSave(t('saved'));updateDisplay(); }
+function saveAll(){ localStorage.setItem('chronoPro_exercises',JSON.stringify(exercises));localStorage.setItem('chronoPro_sequence',sequenceInputValue);localStorage.setItem('chronoPro_setupTime',setupTime);updateTotalTimeDisplay();showAutoSave(t('saved'));updateDisplay(); }
 function showAutoSave(msg){ let el=document.getElementById("autosave-status");if(el){el.textContent=msg;el.style.opacity=1;setTimeout(()=>el.style.opacity=0,2500);}else console.log(msg); }
 function showError(msg){ let el=document.getElementById("error-msg");if(el){el.textContent=msg;el.style.display="block";setTimeout(()=>el.style.display="none",6000);} }
 function syncSeq(){ let v=document.getElementById("sequence-input").value;if(v!==sequenceInputValue){sequenceInputValue=v;updateTotalTimeDisplay();resetWorkout();} }
 function syncSetup(){ let v=parseInt(document.getElementById("setup-time").value);if(!isNaN(v)&&v!==setupTime){setupTime=v;updateTotalTimeDisplay();resetWorkout();} }
-function syncVoice(){ voiceEnabled=document.getElementById("voice-toggle").checked;localStorage.setItem('chronoPro_voice',voiceEnabled);if(voiceEnabled&&window.speechSynthesis)speak(t('ready')); }
 
 // ===== INIT =====
 function init(){
@@ -717,9 +698,7 @@ function init(){
 
   sequenceInputValue=localStorage.getItem('chronoPro_sequence')||"30x(4:10-P10)-P30-30x(11:10-P20)-P30-10x(15:40-P30)";
   setupTime=parseInt(localStorage.getItem('chronoPro_setupTime'))||15;
-  voiceEnabled=localStorage.getItem('chronoPro_voice')==='true';
 
-  // Restaurer langue
   const savedLang=localStorage.getItem('chronoPro_lang');
   if(savedLang && BASE_TR[savedLang]) setLanguage(savedLang);
   else setLanguage('fr');
@@ -728,12 +707,10 @@ function init(){
   cleanSequenceFromMissingIds();
   document.getElementById("sequence-input").value=sequenceInputValue;
   document.getElementById("setup-time").value=setupTime;
-  document.getElementById("voice-toggle").checked=voiceEnabled;
   applyTranslations();
 
   document.getElementById("sequence-input").addEventListener("input",syncSeq);
   document.getElementById("setup-time").addEventListener("input",syncSetup);
-  document.getElementById("voice-toggle").addEventListener("change",syncVoice);
 
   loadSavedPrograms(); renderExercises(); resetWorkout(); updateTotalTimeDisplay();
 
@@ -742,7 +719,7 @@ function init(){
   document.getElementById("start-btn").onclick=startWorkout;
   document.getElementById("pause-btn").onclick=pauseWorkout;
   document.getElementById("reset-btn").onclick=resetWorkout;
-  document.getElementById("config-btn").onclick=()=>{let p=document.getElementById("config-panel");p.style.display=p.style.display==="block"?"none":"block";if(p.style.display==="block"){document.getElementById("sequence-input").value=sequenceInputValue;document.getElementById("setup-time").value=setupTime;document.getElementById("voice-toggle").checked=voiceEnabled;renderExercises();}};
+  document.getElementById("config-btn").onclick=()=>{let p=document.getElementById("config-panel");p.style.display=p.style.display==="block"?"none":"block";if(p.style.display==="block"){document.getElementById("sequence-input").value=sequenceInputValue;document.getElementById("setup-time").value=setupTime;renderExercises();}};
   document.getElementById("add-exercise-btn").onclick=()=>addExercise();
   document.getElementById("save-config-btn").onclick=saveAll;
   document.getElementById("save-program-btn").onclick=saveCurrentProgram;
