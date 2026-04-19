@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-<title>Chrono Pro V9.17 – PWA & multilingue</title>
+<title>Chrono Pro V9.18 – PWA & multilingue</title>
 <link rel="manifest" href="manifest.json">
 <style>
   *{box-sizing:border-box;}
@@ -31,6 +31,8 @@
   .clean-btn{background:#6c757d;}
   .lang-select{margin-bottom:10px;padding:5px;border-radius:6px;}
   .loader{display:inline-block;width:20px;height:20px;border:2px solid #ccc;border-top-color:#007bff;border-radius:50%;animation:spin 0.6s linear infinite;}
+  #autosave-status{font-size:13px;color:green;margin-top:8px;opacity:0;transition:opacity 0.5s;}
+  #total-time-info{margin-top:10px;font-weight:bold;}
   @keyframes spin{to{transform:rotate(360deg)}}
   @media (max-width: 480px) and (orientation: landscape) {
     #timer { font-size: 32px; margin: 10px 0; }
@@ -47,13 +49,15 @@
 <body>
 
 <div id="workout-container">
+  <!-- FIX: label associé via for+id -->
+  <label for="lang-select" style="display:none">Langue</label>
   <select id="lang-select" class="lang-select">
     <option value="fr">🇫🇷 Français</option>
     <option value="en">🇬🇧 English</option>
   </select>
   <div id="image-container" class="single">
     <div><img id="current-image" src="https://i.imgur.com/IHCEoad.png" alt="Exercice"><div id="current-label" class="image-label"></div><div id="current-loader" class="loader" style="display:none"></div></div>
-    <div id="next-image-wrapper" style="display:none"><img id="next-image" src=""><div class="image-label" data-i18n="nextExercise">Prochain exercice</div><div id="next-loader" class="loader" style="display:none"></div></div>
+    <div id="next-image-wrapper" style="display:none"><img id="next-image" src="" alt="Prochain exercice"><div class="image-label" data-i18n="nextExercise">Prochain exercice</div><div id="next-loader" class="loader" style="display:none"></div></div>
   </div>
   <div id="exercise-info">Préparation</div>
   <div id="series-info"></div>
@@ -68,24 +72,38 @@
   <button id="pause-btn" data-i18n="pause">⏸ Pause</button>
   <button id="reset-btn" data-i18n="reset">⟳ Réinitialiser</button>
   <button id="config-btn" data-i18n="config">⚙ Configurer</button>
-  <div class="version">Chrono Pro V9.17 – PWA & multilingue</div>
+  <div id="autosave-status"></div>
+  <div class="version">Chrono Pro V9.18 – PWA & multilingue</div>
 </div>
 
 <div id="config-panel" class="config-panel">
   <h3 data-i18n="configTitle">Configuration</h3>
-  <label data-i18n="setupLabel">Mise en place (secondes) : <input type="number" id="setup-time" value="15" min="0"></label><br>
-  <label><input type="checkbox" id="voice-toggle"> <span data-i18n="voiceLabel">Synthèse vocale (français)</span></label>
+
+  <!-- FIX: labels correctement associés avec for+id -->
+  <div style="margin-bottom:10px">
+    <label for="setup-time" data-i18n="setupLabel">Mise en place (secondes) :</label>
+    <input type="number" id="setup-time" value="15" min="0" style="margin-left:8px;width:70px">
+  </div>
+  <div>
+    <label for="voice-toggle">
+      <input type="checkbox" id="voice-toggle">
+      <span id="voice-label" data-i18n="voiceLabel">Synthèse vocale (français)</span>
+    </label>
+  </div>
 
   <div style="margin-top:15px">
-    <label><strong data-i18n="sequenceLabel">Séquence d'entraînement :</strong></label>
-    <input type="text" id="sequence-input" style="width:100%;padding:8px;font-family:monospace">
+    <label for="sequence-input"><strong data-i18n="sequenceLabel">Séquence d'entraînement :</strong></label>
+    <input type="text" id="sequence-input" style="width:100%;padding:8px;font-family:monospace;margin-top:5px">
     <div class="help" data-i18n="sequenceHelp">Exemple : 30x(4:10-P10)-P30-30x(11:10-P20)-P30-10x(15:40-P30)<br>Formats : <code>8:40</code> (durée) ou <code>8:6@3-0-1-0</code> (tempo). Repos : <code>P30</code>.</div>
   </div>
+
+  <!-- FIX: total-time-info dans le HTML, plus créé dynamiquement -->
+  <div id="total-time-info"></div>
 
   <div class="advanced-zone">
     <details>
       <summary><strong>📁 Gestion des programmes (avancé)</strong></summary>
-      <label data-i18n="programsLabel">Programmes sauvegardés :</label>
+      <label for="program-select" data-i18n="programsLabel">Programmes sauvegardés :</label>
       <select id="program-select" class="program-select">
         <option value="">-- Charger un programme --</option>
       </select>
@@ -100,6 +118,7 @@
         <button id="export-all-programs-btn" data-i18n="exportAllPrograms">📦 Exporter tous les programmes</button>
         <button id="import-programs-btn" data-i18n="importPrograms">📥 Importer des programmes</button>
         <button id="export-full-btn" data-i18n="exportFull">💾 Exporter toute la config</button>
+        <button id="import-full-btn">📥 Importer configuration complète</button>
         <button id="clean-exercises-btn" class="clean-btn" data-i18n="cleanExercises">🧹 Nettoyer exos invalides</button>
       </div>
       <div class="help" data-i18n="advancedHelp">• Exporter un programme : partage la séquence et les exercices liés. L'import fusionne via UUID.<br>• Exporter tous les programmes : sauvegarde la liste complète.<br>• Exporter toute la configuration : sauvegarde complète (exercices, programmes, réglages).</div>
@@ -156,13 +175,11 @@ let currentLang = localStorage.getItem('chronoPro_lang') || 'fr';
 function t(key) { return translations[currentLang][key] || key; }
 function applyLanguage() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
-    el.innerText = t(el.dataset.i18n);
+    const key = el.dataset.i18n;
+    // Ne pas écraser le innerHTML si l'élément contient des enfants (input, etc.)
+    if(el.children.length === 0) el.innerText = t(key);
   });
-  // Mettre à jour le label du checkbox voice (qui n'a pas data-i18n)
-  const voiceLabel = document.querySelector('#voice-toggle + span');
-  if(voiceLabel) voiceLabel.innerText = t('voiceLabel');
-  // Mettre à jour le placeholder de sequence-input? Pas nécessaire.
-  updateDisplay(); // rafraîchit les textes dynamiques
+  updateDisplay();
 }
 function setLang(lang) {
   currentLang = lang;
@@ -170,11 +187,12 @@ function setLang(lang) {
   applyLanguage();
   if(voiceEnabled) speak(t('ready'));
 }
+
 // ========== AUDIO & VOIX ==========
 let audioCtx = null, lastBeepTime = 0, voiceEnabled = false;
 function getAudioContext() { if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); document.body.addEventListener('touchstart', ()=>audioCtx.resume(), {once:true}); document.body.addEventListener('click', ()=>audioCtx.resume(), {once:true}); } return audioCtx; }
 function beep(freq=800, dur=200) { try { let now = Date.now(); if (now-lastBeepTime<50) return; lastBeepTime=now; let ctx=getAudioContext(); let o=ctx.createOscillator(); let g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value=freq; o.type='sine'; g.gain.setValueAtTime(0.001, ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.4, ctx.currentTime+0.01); g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+dur/1000); o.start(); o.stop(ctx.currentTime+dur/1000); } catch(e){} }
-function speak(txt) { 
+function speak(txt) {
   if(!voiceEnabled) return;
   if(!window.speechSynthesis) return;
   try { window.speechSynthesis.cancel(); } catch(e) {}
@@ -195,13 +213,13 @@ let isSetupPhase = true, currentBlockIndex = -1, timeLeft = 0, timerInterval = n
 let isTempoMode = false, tempoInterval = null, currentRep=0, currentPhase=0, tempoPhases=[0,0,0,0], tempoOriginal=[0,0,0,0], totalReps=0;
 let savedPrograms = [];
 
-// ========== PARSER (inchangé) ==========
-function parseExerciseToken(t) {
-  let m = t.match(/^(\d+):(\d+)$/);
+// ========== PARSER ==========
+function parseExerciseToken(tok) {
+  let m = tok.match(/^(\d+):(\d+)$/);
   if(m) return { type:'exercise', id:parseInt(m[1]), duration:parseInt(m[2]) };
-  m = t.match(/^(\d+):(\d+)@(\d+-\d+-\d+-\d+)$/);
+  m = tok.match(/^(\d+):(\d+)@(\d+-\d+-\d+-\d+)$/);
   if(m) return { type:'exercise', id:parseInt(m[1]), reps:parseInt(m[2]), tempo:m[3] };
-  throw new Error(`Format invalide: ${t}`);
+  throw new Error(`Format invalide: ${tok}`);
 }
 function parseSequence(input) {
   try {
@@ -210,38 +228,38 @@ function parseSequence(input) {
     let stack = [{ blocks:[], mult:1 }];
     let i=0;
     while(i<tokens.length){
-      let t=tokens[i];
-      if(/^\d+x\(/.test(t)){ let r=parseInt(t); stack.push({ blocks:[], mult:r }); i++; continue; }
-      if(t=='('||t=='+'||t==')'){
-        if(t==')'){ let cur=stack.pop(); let parent=stack[stack.length-1]; for(let r=0;r<cur.mult;r++) parent.blocks.push(...cur.blocks); }
+      let tok=tokens[i];
+      if(/^\d+x\(/.test(tok)){ let r=parseInt(tok); stack.push({ blocks:[], mult:r }); i++; continue; }
+      if(tok=='('||tok=='+'||tok==')'){
+        if(tok==')'){ let cur=stack.pop(); let parent=stack[stack.length-1]; for(let r=0;r<cur.mult;r++) parent.blocks.push(...cur.blocks); }
         i++; continue;
       }
-      if(t.toUpperCase().startsWith('P')){ let d=parseInt(t.slice(1)); stack[stack.length-1].blocks.push({ type:'rest', duration:d }); i++; continue; }
-      stack[stack.length-1].blocks.push(parseExerciseToken(t));
+      if(tok.toUpperCase().startsWith('P')){ let d=parseInt(tok.slice(1)); stack[stack.length-1].blocks.push({ type:'rest', duration:d }); i++; continue; }
+      stack[stack.length-1].blocks.push(parseExerciseToken(tok));
       i++;
     }
-    if(stack.length>1) throw new Error("Parenthèse");
+    if(stack.length>1) throw new Error("Parenthèse non fermée");
     return stack[0].blocks;
   } catch(e){ showError("Séquence: "+e.message); return []; }
 }
 function totalTime(){
-  let blocks=parseSequence(sequenceInputValue), t=setupTime;
+  let blocks=parseSequence(sequenceInputValue), total=setupTime;
   for(let i=0;i<blocks.length;i++){
     let b=blocks[i];
     if(b.type=='rest' && i==blocks.length-1) continue;
     if(b.type=='exercise'){
-      if(b.duration) t+=b.duration;
-      else if(b.reps && b.tempo){ let parts=b.tempo.split('-').map(Number); let cycle=parts.reduce((a,b)=>a+b,0); t+=cycle*b.reps; }
-      else t+=30;
-    } else t+=b.duration;
+      if(b.duration) total+=b.duration;
+      else if(b.reps && b.tempo){ let parts=b.tempo.split('-').map(Number); let cycle=parts.reduce((a,c)=>a+c,0); total+=cycle*b.reps; }
+      else total+=30;
+    } else total+=b.duration;
   }
-  return t;
+  return total;
 }
 function formatMMSS(s){ return `${Math.floor(s/60)}`.padStart(2,'0')+':'+`${s%60}`.padStart(2,'0'); }
 function updateTotalTimeDisplay() {
   let total = totalTime();
   let span = document.getElementById("total-time-info");
-  if(span) span.innerHTML = `${t('configTitle')} : ${Math.floor(total/60)}m ${total%60}s`;
+  if(span) span.innerHTML = `Durée totale : ${Math.floor(total/60)}m ${total%60}s`;
 }
 
 // ========== INDICATEUR DE CHARGEMENT IMAGES ==========
@@ -262,7 +280,7 @@ function setImageWithLoader(imgElement, src, loaderId) {
   tempImg.src = src;
 }
 
-// ========== TEMPO (inchangé) ==========
+// ========== TEMPO ==========
 function startTempoMode(block){
   if(timerInterval) { clearInterval(timerInterval); timerInterval = null; }
   if(tempoInterval) clearInterval(tempoInterval);
@@ -305,7 +323,7 @@ function updateTempoDisplay(){
 }
 function stopTempoMode(){ if(tempoInterval) clearInterval(tempoInterval); isTempoMode=false; document.getElementById("timer").style.fontSize="56px"; }
 
-// ========== AFFICHAGE (avec chargement images) ==========
+// ========== AFFICHAGE ==========
 function getExerciseById(id){ return exercises.find(e=>e.id===id); }
 function updateDisplay(){
   let container=document.getElementById("image-container"), curImg=document.getElementById("current-image"), curLabel=document.getElementById("current-label"), nextWrap=document.getElementById("next-image-wrapper"), nextImg=document.getElementById("next-image");
@@ -355,7 +373,7 @@ function updateDisplay(){
   }
 }
 
-// ========== LOGIQUE PRINCIPALE (identique à avant, mais avec speak traduit) ==========
+// ========== LOGIQUE PRINCIPALE ==========
 function advanceBlock(){
   if(isTempoMode) stopTempoMode();
   currentBlockIndex++;
@@ -367,7 +385,7 @@ function advanceBlock(){
   }
   let block=blocks[currentBlockIndex];
   if(block.type==='rest' && currentBlockIndex===blocks.length-1){
-    currentBlockIndex=blocks.length; 
+    currentBlockIndex=blocks.length;
     if(timerInterval) { clearInterval(timerInterval); timerInterval = null; }
     beep(1200,400); setTimeout(()=>beep(1400,400),500); setTimeout(()=>beep(1600,800),1000);
     updateDisplay(); return;
@@ -502,7 +520,7 @@ function nextBlock(){
   updateDisplay();
 }
 
-// ========== GESTION EXERCICES (inchangé) ==========
+// ========== GESTION EXERCICES ==========
 function getNextId(){ return exercises.length?Math.max(...exercises.map(e=>e.id))+1:1; }
 function addExercise(uid=null, name="Nouvel exo", reps="8-12", workTime=40, image=""){
   let newId=getNextId();
@@ -523,13 +541,20 @@ function renderExercises(){
   for(let i=0;i<exercises.length;i++){
     let ex=exercises[i];
     let d=document.createElement("div"); d.style.borderBottom="1px solid #ccc"; d.style.padding="8px 0"; d.style.display="flex"; d.style.flexWrap="wrap"; d.style.gap="8px"; d.style.alignItems="center";
+    // FIX: labels avec for+id pour accessibilité
+    let nameId = `ex-name-${i}`, repsId = `ex-reps-${i}`, timeId = `ex-time-${i}`, imgId = `ex-img-${i}`, fileId = `ex-file-${i}`;
     d.innerHTML=`
       <span style="font-weight:bold">${ex.id}</span>
-      <input type="text" value="${(ex.name||"").replace(/"/g,'&quot;')}" onchange="exercises[${i}].name=this.value; saveAll(); renderExercises()" style="width:120px">
-      <input type="text" value="${(ex.reps||"").replace(/"/g,'&quot;')}" onchange="exercises[${i}].reps=this.value; saveAll()" style="width:60px">
-      <input type="number" value="${ex.workTime||40}" min="1" max="300" onchange="exercises[${i}].workTime=Math.max(1,parseInt(this.value)||30); saveAll()" style="width:60px">
-      <input type="text" placeholder="URL image" value="${ex.image||''}" onchange="exercises[${i}].image=this.value; saveAll()" style="width:150px">
-      <input type="file" accept="image/*" onchange="((f)=>{if(f){let r=new FileReader(); r.onload=e=>{exercises[${i}].image=e.target.result; saveAll(); renderExercises();}; r.readAsDataURL(f)}})(this.files[0])">
+      <label for="${nameId}" style="display:none">Nom</label>
+      <input id="${nameId}" type="text" value="${(ex.name||"").replace(/"/g,'&quot;')}" onchange="exercises[${i}].name=this.value; saveAll(); renderExercises()" style="width:120px">
+      <label for="${repsId}" style="display:none">Reps</label>
+      <input id="${repsId}" type="text" value="${(ex.reps||"").replace(/"/g,'&quot;')}" onchange="exercises[${i}].reps=this.value; saveAll()" style="width:60px">
+      <label for="${timeId}" style="display:none">Temps</label>
+      <input id="${timeId}" type="number" value="${ex.workTime||40}" min="1" max="300" onchange="exercises[${i}].workTime=Math.max(1,parseInt(this.value)||30); saveAll()" style="width:60px">
+      <label for="${imgId}" style="display:none">URL image</label>
+      <input id="${imgId}" type="text" placeholder="URL image" value="${ex.image||''}" onchange="exercises[${i}].image=this.value; saveAll()" style="width:150px">
+      <label for="${fileId}" style="display:none">Fichier image</label>
+      <input id="${fileId}" type="file" accept="image/*" onchange="((f)=>{if(f){let r=new FileReader(); r.onload=e=>{exercises[${i}].image=e.target.result; saveAll(); renderExercises();}; r.readAsDataURL(f)}})(this.files[0])">
       <button onclick="if(confirm('Supprimer ?')){exercises.splice(${i},1); updateIdMapping(); saveAll(); renderExercises();}" style="background:#dc3545;padding:4px 12px">✕</button>
       <span style="font-size:10px;color:#888">${(ex.uid||"").slice(0,6)}</span>
     `;
@@ -571,7 +596,7 @@ function cleanSequenceFromMissingIds() {
   }
 }
 
-// ========== PROGRAMMES (inchangé) ==========
+// ========== PROGRAMMES ==========
 function loadSavedPrograms(){
   let stored=localStorage.getItem('chronoPro_savedPrograms');
   savedPrograms=stored?JSON.parse(stored):[];
@@ -696,8 +721,9 @@ function importPrograms(file) {
   reader.readAsText(file);
 }
 function exportWeekText(){
+  let tt = totalTime();
   let content = currentLang==='fr' ? "=== Programme de la semaine ===\n\n" : "=== Weekly program ===\n\n";
-  content+=`${t('sequenceLabel')} :\n${sequenceInputValue}\n\n${t('configTitle')} : ${Math.floor(totalTime()/60)}m ${totalTime()%60}s\n\n${currentLang==='fr'?'Exercices utilisés :':'Used exercises:'}\n`;
+  content+=`${t('sequenceLabel')} :\n${sequenceInputValue}\n\nDurée totale : ${Math.floor(tt/60)}m ${tt%60}s\n\n${currentLang==='fr'?'Exercices utilisés :':'Used exercises:'}\n`;
   let blocks=parseSequence(sequenceInputValue);
   let usedIds=new Set(); for(let b of blocks) if(b.type==='exercise') usedIds.add(b.id);
   for(let id of usedIds){ let ex=getExerciseById(id); if(ex) content+=`- [${id}] ${ex.name} (${ex.reps}) - ${ex.workTime}s\n`; }
@@ -735,8 +761,14 @@ function saveAll(){
   showAutoSave("✓ Sauvegardé");
   updateDisplay();
 }
-function showAutoSave(msg){ let el=document.getElementById("autosave-status"); if(el){ el.textContent=msg; el.style.opacity=1; setTimeout(()=>el.style.opacity=0,2000);} else console.log(msg); }
-function showError(msg){ let el=document.getElementById("error-msg"); el.textContent=msg; el.style.display="block"; setTimeout(()=>el.style.display="none",6000); }
+
+// FIX : autosave-status est maintenant dans le DOM, plus besoin de créer dynamiquement
+function showAutoSave(msg){
+  let el=document.getElementById("autosave-status");
+  if(el){ el.textContent=msg; el.style.opacity=1; setTimeout(()=>el.style.opacity=0,2500); }
+  else console.log(msg);
+}
+function showError(msg){ let el=document.getElementById("error-msg"); if(el){ el.textContent=msg; el.style.display="block"; setTimeout(()=>el.style.display="none",6000); } }
 
 // ========== SYNC ==========
 function syncSequenceFromInput() {
@@ -755,59 +787,62 @@ function syncVoiceFromCheckbox() {
 
 // ========== INIT ==========
 function init(){
-  // Chargement des données
   let stored = localStorage.getItem('chronoPro_exercises');
   if(stored) { try { exercises = JSON.parse(stored); } catch(e) { exercises = []; } }
   const before = exercises.length;
   exercises = exercises.filter(ex => ex && typeof ex.name === 'string' && ex.name.trim() !== '' && ex.name !== 'undefined' && ex.name !== 'null');
-  if (exercises.length === 0 || (before > 0 && exercises.length < before * 0.7)) {
-    const defaultExercises = [ /* ... garde les mêmes que dans V9.16 ... */ ];
-    // Pour éviter de surcharger, on garde les exercices par défaut de la version précédente
-    // (je les raccourcis ici, mais tu peux reprendre exactement les 32 exercices de ton code original)
+  if (exercises.length === 0) {
     exercises = [
       {"name":"1. Dips lestés","reps":"3–5 reps","workTime":40,"image":"https://fitnessprogramer.com/wp-content/uploads/2022/07/Ring-Dips.gif"},
       {"name":"2. Pompes piquées / HSPU","reps":"4–6 reps","workTime":40,"image":"https://fitnessprogramer.com/wp-content/uploads/2021/06/Bench-Pike-Push-up.gif"},
-      // ... ajoute tous les autres identiques à ton V9.16
     ].map((ex,idx)=>({ id:idx+1, uid:uuid(), name:ex.name, reps:ex.reps, workTime:ex.workTime, image:ex.image }));
     localStorage.setItem('chronoPro_exercises', JSON.stringify(exercises));
   }
   for(let ex of exercises) if(!ex.uid) ex.uid = uuid();
+
   sequenceInputValue = localStorage.getItem('chronoPro_sequence') || "30x(4:10-P10)-P30-30x(11:10-P20)-P30-10x(15:40-P30)";
   setupTime = parseInt(localStorage.getItem('chronoPro_setupTime')) || 15;
   voiceEnabled = localStorage.getItem('chronoPro_voice') === 'true';
+
   cleanSequenceFromMissingIds();
   document.getElementById("sequence-input").value = sequenceInputValue;
   document.getElementById("setup-time").value = setupTime;
   document.getElementById("voice-toggle").checked = voiceEnabled;
+
   // Langue
   const savedLang = localStorage.getItem('chronoPro_lang');
   if(savedLang && (savedLang === 'fr' || savedLang === 'en')) currentLang = savedLang;
   document.getElementById("lang-select").value = currentLang;
   applyLanguage();
+
+  // Events
   document.getElementById("lang-select").addEventListener("change", (e) => setLang(e.target.value));
   document.getElementById("sequence-input").addEventListener("input", syncSequenceFromInput);
   document.getElementById("setup-time").addEventListener("input", syncSetupFromInput);
   document.getElementById("voice-toggle").addEventListener("change", syncVoiceFromCheckbox);
+
   loadSavedPrograms();
   renderExercises();
   resetWorkout();
+  // FIX: total-time-info est dans le DOM, on peut appeler directement
   updateTotalTimeDisplay();
-  let infoDiv = document.getElementById("total-time-info");
-  if(!infoDiv){
-    let p = document.getElementById("config-panel");
-    let div = document.createElement("div");
-    div.id = "total-time-info";
-    div.style.marginTop = "10px";
-    div.style.fontWeight = "bold";
-    p.appendChild(div);
-  }
-  updateTotalTimeDisplay();
+
+  // Boutons principaux
   document.getElementById("prev-btn").onclick = prevBlock;
   document.getElementById("next-btn").onclick = nextBlock;
   document.getElementById("start-btn").onclick = startWorkout;
   document.getElementById("pause-btn").onclick = pauseWorkout;
   document.getElementById("reset-btn").onclick = resetWorkout;
-  document.getElementById("config-btn").onclick = () => { let p=document.getElementById("config-panel"); p.style.display = p.style.display==="block" ? "none" : "block"; if(p.style.display==="block"){ document.getElementById("sequence-input").value=sequenceInputValue; document.getElementById("setup-time").value=setupTime; document.getElementById("voice-toggle").checked=voiceEnabled; renderExercises(); } };
+  document.getElementById("config-btn").onclick = () => {
+    let p=document.getElementById("config-panel");
+    p.style.display = p.style.display==="block" ? "none" : "block";
+    if(p.style.display==="block"){
+      document.getElementById("sequence-input").value=sequenceInputValue;
+      document.getElementById("setup-time").value=setupTime;
+      document.getElementById("voice-toggle").checked=voiceEnabled;
+      renderExercises();
+    }
+  };
   document.getElementById("add-exercise-btn").onclick = () => addExercise();
   document.getElementById("save-config-btn").onclick = saveAll;
   document.getElementById("save-program-btn").onclick = saveCurrentProgram;
@@ -817,15 +852,17 @@ function init(){
   document.getElementById("import-program-btn").onclick = () => { let input=document.createElement('input'); input.type='file'; input.accept='.json'; input.onchange=e=>{ if(e.target.files[0]) importProgramFile(e.target.files[0]); }; input.click(); };
   document.getElementById("export-week-btn").onclick = exportWeekText;
   document.getElementById("export-full-btn").onclick = exportFull;
+  // FIX: bouton import-full-btn maintenant dans le HTML, plus créé dynamiquement
+  document.getElementById("import-full-btn").onclick = () => { let inp=document.createElement('input'); inp.type='file'; inp.accept='.json'; inp.onchange=e=>{ if(e.target.files[0]) importFull(e.target.files[0]); }; inp.click(); };
   document.getElementById("clean-exercises-btn").onclick = () => { cleanInvalidExercises(); cleanSequenceFromMissingIds(); resetWorkout(); updateTotalTimeDisplay(); };
   document.getElementById("export-all-programs-btn").onclick = exportAllPrograms;
   document.getElementById("import-programs-btn").onclick = () => { let inp=document.createElement('input'); inp.type='file'; inp.accept='.json'; inp.onchange=e=>{ if(e.target.files[0]) importPrograms(e.target.files[0]); }; inp.click(); };
-  let importFullBtn = document.createElement("button"); importFullBtn.innerHTML = "📥 Importer configuration complète"; importFullBtn.onclick = () => { let inp=document.createElement('input'); inp.type='file'; inp.accept='.json'; inp.onchange=e=>{ if(e.target.files[0]) importFull(e.target.files[0]); }; inp.click(); };
-  document.querySelector(".advanced-zone .flex-buttons").appendChild(importFullBtn);
 
-  // Enregistrement du service worker pour PWA (hors ligne)
+  // PWA Service Worker
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW enregistré', reg)).catch(err => console.log('SW erreur', err));
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('SW enregistré', reg))
+      .catch(err => console.log('SW erreur', err));
   }
 }
 init();
