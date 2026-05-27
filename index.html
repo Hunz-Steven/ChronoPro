@@ -37,6 +37,89 @@
   @keyframes spin{to{transform:rotate(360deg)}}
   @media (max-width: 480px) and (orientation: landscape){#timer{font-size:32px;margin:10px 0}button{padding:6px 10px;font-size:12px}#image-container.double img{max-height:120px}#workout-container{padding:15px}}
   @media (max-width: 380px){.flex-buttons button{padding:8px 12px;font-size:13px}#timer{font-size:40px}}
+
+  /* ===== MODE SOMBRE ===== */
+  :root {
+    --bg-body: #f0f0f0;
+    --bg-container: white;
+    --text-color: #111;
+    --border-color: #ccc;
+    --panel-bg: #f8f9fa;
+    --advanced-bg: #e9ecef;
+    --input-bg: white;
+    --input-border: #ccc;
+    --button-bg: #007bff;
+    --button-hover: #0056b3;
+    --delete-bg: #dc3545;
+  }
+  body.dark {
+    --bg-body: #121212;
+    --bg-container: #1e1e1e;
+    --text-color: #e0e0e0;
+    --border-color: #444;
+    --panel-bg: #2c2c2c;
+    --advanced-bg: #333;
+    --input-bg: #2a2a2a;
+    --input-border: #555;
+    --button-bg: #0a5e8a;
+    --button-hover: #0c7ab3;
+    --delete-bg: #9e2a2a;
+  }
+  body {
+    background: var(--bg-body);
+    color: var(--text-color);
+    transition: background 0.2s, color 0.2s;
+  }
+  #workout-container {
+    background: var(--bg-container);
+    color: var(--text-color);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  }
+  .config-panel {
+    background: var(--panel-bg);
+  }
+  .advanced-zone {
+    background: var(--advanced-bg);
+  }
+  input, select, textarea, .program-select, #lang-select {
+    background: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--input-border);
+  }
+  select option {
+    background: var(--input-bg);
+    color: var(--text-color);
+  }
+  button {
+    background: var(--button-bg);
+  }
+  button:hover {
+    background: var(--button-hover);
+  }
+  .clean-btn {
+    background: #6c757d;
+  }
+  #exercise-list {
+    max-height:200px;
+    overflow-y:auto;
+    border:1px solid var(--border-color);
+    padding:8px;
+    background: var(--bg-container);
+  }
+  .image-label, .version, .help {
+    color: var(--text-color);
+    opacity: 0.8;
+  }
+  #timer {
+    color: #4c9aff;
+  }
+  #autosave-status {
+    color: #4caf50;
+  }
+  #sequence-input, #setup-time, .program-select, #lang-select {
+    background: var(--input-bg) !important;
+    border-color: var(--input-border) !important;
+  }
 </style>
 </head>
 <body>
@@ -78,6 +161,7 @@
   <button id="pause-btn" data-i18n="pause">⏸ Pause</button>
   <button id="reset-btn" data-i18n="reset">⟳ Réinitialiser</button>
   <button id="config-btn" data-i18n="config">⚙ Configurer</button>
+  <button id="dark-mode-btn" data-i18n="darkMode">🌙 Mode sombre</button>
   <div id="autosave-status"></div>
   <div class="version">Chrono Pro V9.30</div>
 </div>
@@ -91,7 +175,7 @@
   <div style="margin-top:15px">
     <label for="sequence-input"><strong data-i18n="sequenceLabel">Séquence d'entraînement :</strong></label>
     <input type="text" id="sequence-input" style="width:100%;padding:8px;font-family:monospace;margin-top:5px">
-    <div class="help" data-i18n="sequenceHelp">Exemple : 30x(4:10-P10)-P30</div>
+    <div class="help" data-i18n="sequenceHelp">Exemple : 30x(4:10-P10)-P30. Édition : sélectionnez un programme, modifiez, puis cliquez sur "Sauvegarder" pour l'écraser.</div>
   </div>
   <div id="total-time-info"></div>
   <div class="advanced-zone">
@@ -116,7 +200,7 @@
     </details>
   </div>
   <h4 data-i18n="exerciseListTitle">📋 Liste des exercices</h4>
-  <div id="exercise-list" style="max-height:200px;overflow-y:auto;border:1px solid #ddd;padding:8px;background:white"></div>
+  <div id="exercise-list"></div>
   <div class="flex-buttons">
     <button id="add-exercise-btn" data-i18n="addExercise">+ Ajouter un exercice</button>
     <button id="save-config-btn" data-i18n="saveConfig">💾 Sauvegarder</button>
@@ -124,7 +208,7 @@
 </div>
 
 <script>
-// ===== TRADUCTIONS COMPLÈTES 15 LANGUES (sans voix) =====
+// ===== TRADUCTIONS COMPLÈTES 15 LANGUES (avec darkMode) =====
 const BASE_TR = {
   fr: {
     ready:"Prêt", preparation:"Préparation", rest:"Repos", work:"TRAVAIL", tempo:"TEMPO",
@@ -150,7 +234,8 @@ const BASE_TR = {
     seqCleaned:"⚠️ Séquence nettoyée (IDs invalides supprimés).", saved:"✓ Sauvegardé",
     progSaved:"Programme sauvegardé", progDeleted:"Programme supprimé", progLoaded:"chargé et réinitialisé.",
     allExported:"Tous les programmes exportés.", noNewImported:"Aucun nouveau programme importé.",
-    exercisesRemoved:"exercice(s) invalide(s) supprimé(s)."
+    exercisesRemoved:"exercice(s) invalide(s) supprimé(s).",
+    darkMode:"🌙 Mode sombre"
   },
   en: {
     ready:"Ready", preparation:"Setup", rest:"Rest", work:"WORK", tempo:"TEMPO",
@@ -176,7 +261,8 @@ const BASE_TR = {
     seqCleaned:"⚠️ Sequence cleaned (invalid IDs removed).", saved:"✓ Saved",
     progSaved:"Program saved", progDeleted:"Program deleted", progLoaded:"loaded and reset.",
     allExported:"All programs exported.", noNewImported:"No new programs imported.",
-    exercisesRemoved:"invalid exercise(s) removed."
+    exercisesRemoved:"invalid exercise(s) removed.",
+    darkMode:"🌙 Dark mode"
   },
   de: {
     ready:"Bereit", preparation:"Vorbereitung", rest:"Pause", work:"ARBEIT", tempo:"TEMPO",
@@ -201,7 +287,8 @@ const BASE_TR = {
     seqCleaned:"⚠️ Sequenz bereinigt (ungültige IDs entfernt).", saved:"✓ Gespeichert",
     progSaved:"Programm gespeichert", progDeleted:"Programm gelöscht", progLoaded:"geladen und zurückgesetzt.",
     allExported:"Alle Programme exportiert.", noNewImported:"Keine neuen Programme importiert.",
-    exercisesRemoved:"ungültige Übung(en) entfernt."
+    exercisesRemoved:"ungültige Übung(en) entfernt.",
+    darkMode:"🌙 Dunkelmodus"
   },
   es: {
     ready:"Listo", preparation:"Preparación", rest:"Descanso", work:"TRABAJO", tempo:"TEMPO",
@@ -226,7 +313,8 @@ const BASE_TR = {
     seqCleaned:"⚠️ Secuencia limpiada (IDs inválidos eliminados).", saved:"✓ Guardado",
     progSaved:"Programa guardado", progDeleted:"Programa eliminado", progLoaded:"cargado y reiniciado.",
     allExported:"Todos los programas exportados.", noNewImported:"No se importaron nuevos programas.",
-    exercisesRemoved:"ejercicio(s) inválido(s) eliminado(s)."
+    exercisesRemoved:"ejercicio(s) inválido(s) eliminado(s).",
+    darkMode:"🌙 Modo oscuro"
   },
   it: {
     ready:"Pronto", preparation:"Preparazione", rest:"Riposo", work:"LAVORO", tempo:"TEMPO",
@@ -251,7 +339,8 @@ const BASE_TR = {
     seqCleaned:"⚠️ Sequenza pulita (ID non validi rimossi).", saved:"✓ Salvato",
     progSaved:"Programma salvato", progDeleted:"Programma eliminato", progLoaded:"caricato e resettato.",
     allExported:"Tutti i programmi esportati.", noNewImported:"Nessun nuovo programma importato.",
-    exercisesRemoved:"esercizio/i non valido/i rimossi."
+    exercisesRemoved:"esercizio/i non valido/i rimossi.",
+    darkMode:"🌙 Modalità scura"
   },
   pt: {
     ready:"Pronto", preparation:"Preparação", rest:"Descanso", work:"TRABALHO", tempo:"TEMPO",
@@ -276,7 +365,8 @@ const BASE_TR = {
     seqCleaned:"⚠️ Sequência limpa (IDs inválidos removidos).", saved:"✓ Salvo",
     progSaved:"Programa salvo", progDeleted:"Programa excluído", progLoaded:"carregado e reiniciado.",
     allExported:"Todos os programas exportados.", noNewImported:"Nenhum novo programa importado.",
-    exercisesRemoved:"exercício(s) inválido(s) removido(s)."
+    exercisesRemoved:"exercício(s) inválido(s) removido(s).",
+    darkMode:"🌙 Modo escuro"
   },
   zh: {
     ready:"准备就绪", preparation:"准备", rest:"休息", work:"训练", tempo:"节奏",
@@ -301,7 +391,8 @@ const BASE_TR = {
     seqCleaned:"⚠️ 序列已清理（已移除无效ID）。", saved:"✓ 已保存",
     progSaved:"程序已保存", progDeleted:"程序已删除", progLoaded:"已加载并重置。",
     allExported:"所有程序已导出。", noNewImported:"未导入新程序。",
-    exercisesRemoved:"已移除无效动作。"
+    exercisesRemoved:"已移除无效动作。",
+    darkMode:"🌙 深色模式"
   },
   ja: {
     ready:"準備完了", preparation:"準備", rest:"休憩", work:"ワーク", tempo:"テンポ",
@@ -326,7 +417,8 @@ const BASE_TR = {
     seqCleaned:"⚠️ シーケンスがクリーンされました（無効なIDを削除）。", saved:"✓ 保存されました",
     progSaved:"プログラムが保存されました", progDeleted:"プログラムが削除されました", progLoaded:"ロードされ、リセットされました。",
     allExported:"すべてのプログラムがエクスポートされました。", noNewImported:"新しいプログラムはインポートされませんでした。",
-    exercisesRemoved:"無効なエクササイズが削除されました。"
+    exercisesRemoved:"無効なエクササイズが削除されました。",
+    darkMode:"🌙 ダークモード"
   },
   ko: {
     ready:"준비 완료", preparation:"준비", rest:"휴식", work:"운동", tempo:"템포",
@@ -351,7 +443,8 @@ const BASE_TR = {
     seqCleaned:"⚠️ 시퀀스 정리됨(잘못된 ID 제거).", saved:"✓ 저장됨",
     progSaved:"프로그램 저장됨", progDeleted:"프로그램 삭제됨", progLoaded:"로드 및 초기화됨.",
     allExported:"모든 프로그램이 내보내졌습니다.", noNewImported:"새 프로그램이 가져오지 않았습니다.",
-    exercisesRemoved:"잘못된 운동이 제거되었습니다."
+    exercisesRemoved:"잘못된 운동이 제거되었습니다.",
+    darkMode:"🌙 다크 모드"
   },
   ar: {
     ready:"جاهز", preparation:"تحضير", rest:"راحة", work:"عمل", tempo:"إيقاع",
@@ -376,7 +469,8 @@ const BASE_TR = {
     seqCleaned:"⚠️ تم تنظيف التسلسل (تمت إزالة المعرفات غير الصالحة).", saved:"✓ تم الحفظ",
     progSaved:"تم حفظ البرنامج", progDeleted:"تم حذف البرنامج", progLoaded:"تم التحميل وإعادة التعيين.",
     allExported:"تم تصدير جميع البرامج.", noNewImported:"لم يتم استيراد برامج جديدة.",
-    exercisesRemoved:"تمت إزالة التمرين (تمارين) غير الصالحة."
+    exercisesRemoved:"تمت إزالة التمرين (تمارين) غير الصالحة.",
+    darkMode:"🌙 الوضع المظلم"
   },
   ru: {
     ready:"Готов", preparation:"Подготовка", rest:"Отдых", work:"РАБОТА", tempo:"ТЕМП",
@@ -401,7 +495,8 @@ const BASE_TR = {
     seqCleaned:"⚠️ Последовательность очищена (удалены недопустимые ID).", saved:"✓ Сохранено",
     progSaved:"Программа сохранена", progDeleted:"Программа удалена", progLoaded:"загружена и сброшена.",
     allExported:"Все программы экспортированы.", noNewImported:"Новые программы не импортированы.",
-    exercisesRemoved:"недопустимое(ые) упражнение(я) удалено(ы)."
+    exercisesRemoved:"недопустимое(ые) упражнение(я) удалено(ы).",
+    darkMode:"🌙 Тёмная тема"
   },
   nl: {
     ready:"Klaar", preparation:"Voorbereiding", rest:"Rust", work:"WERK", tempo:"TEMPO",
@@ -426,7 +521,8 @@ const BASE_TR = {
     seqCleaned:"⚠️ Reeks opgeschoond (ongeldige ID's verwijderd).", saved:"✓ Opgeslagen",
     progSaved:"Programma opgeslagen", progDeleted:"Programma verwijderd", progLoaded:"geladen en gereset.",
     allExported:"Alle programma's geëxporteerd.", noNewImported:"Geen nieuwe programma's geïmporteerd.",
-    exercisesRemoved:"ongeldige oefening(en) verwijderd."
+    exercisesRemoved:"ongeldige oefening(en) verwijderd.",
+    darkMode:"🌙 Donkere modus"
   },
   pl: {
     ready:"Gotowy", preparation:"Przygotowanie", rest:"Odpoczynek", work:"PRACA", tempo:"TEMPO",
@@ -451,7 +547,8 @@ const BASE_TR = {
     seqCleaned:"⚠️ Sekwencja wyczyszczona (usunięto nieprawidłowe ID).", saved:"✓ Zapisano",
     progSaved:"Program zapisany", progDeleted:"Program usunięty", progLoaded:"załadowany i zresetowany.",
     allExported:"Wszystkie programy wyeksportowane.", noNewImported:"Nie zaimportowano nowych programów.",
-    exercisesRemoved:"usunięto nieprawidłowe ćwiczenie(a)."
+    exercisesRemoved:"usunięto nieprawidłowe ćwiczenie(a).",
+    darkMode:"🌙 Tryb ciemny"
   },
   tr: {
     ready:"Hazır", preparation:"Hazırlık", rest:"Dinlenme", work:"ÇALIŞMA", tempo:"TEMPO",
@@ -476,7 +573,8 @@ const BASE_TR = {
     seqCleaned:"⚠️ Sıra temizlendi (geçersiz kimlikler kaldırıldı).", saved:"✓ Kaydedildi",
     progSaved:"Program kaydedildi", progDeleted:"Program silindi", progLoaded:"yüklendi ve sıfırlandı.",
     allExported:"Tüm programlar dışa aktarıldı.", noNewImported:"Yeni program içe aktarılmadı.",
-    exercisesRemoved:"geçersiz egzersiz(ler) kaldırıldı."
+    exercisesRemoved:"geçersiz egzersiz(ler) kaldırıldı.",
+    darkMode:"🌙 Koyu mod"
   }
 };
 
@@ -493,6 +591,7 @@ function applyTranslations(){
   if(progSel&&progSel.options[0]) progSel.options[0].textContent=t('loadProgram');
   updateDisplay();
   updateTotalTimeDisplay();
+  updateDarkModeButtonText();
 }
 
 function setLanguage(langCode){
@@ -501,6 +600,30 @@ function setLanguage(langCode){
     currentTr=BASE_TR[langCode];
     localStorage.setItem('chronoPro_lang',langCode);
     applyTranslations();
+  }
+}
+
+// ===== DARK MODE =====
+function updateDarkModeButtonText() {
+  const btn = document.getElementById('dark-mode-btn');
+  if (!btn) return;
+  const isDark = document.body.classList.contains('dark');
+  btn.textContent = isDark ? '☀️ ' + (currentTr.lightMode || 'Mode clair') : (currentTr.darkMode || '🌙 Mode sombre');
+}
+
+function initDarkMode() {
+  const stored = localStorage.getItem('chronoPro_darkMode');
+  const isDark = stored === 'true';
+  if (isDark) document.body.classList.add('dark');
+  const btn = document.getElementById('dark-mode-btn');
+  if (btn) {
+    updateDarkModeButtonText();
+    btn.onclick = () => {
+      document.body.classList.toggle('dark');
+      const nowDark = document.body.classList.contains('dark');
+      localStorage.setItem('chronoPro_darkMode', nowDark);
+      updateDarkModeButtonText();
+    };
   }
 }
 
@@ -518,7 +641,7 @@ let isSetupPhase=true, currentBlockIndex=-1, timeLeft=0, timerInterval=null, isP
 let isTempoMode=false, tempoInterval=null, currentRep=0, currentPhase=0, tempoPhases=[0,0,0,0], tempoOriginal=[0,0,0,0], totalReps=0;
 let savedPrograms=[];
 
-// ===== PARSER (identique) =====
+// ===== PARSER =====
 function parseExToken(tok){ let m=tok.match(/^(\d+):(\d+)$/); if(m)return{type:'exercise',id:parseInt(m[1]),duration:parseInt(m[2])}; m=tok.match(/^(\d+):(\d+)@(\d+-\d+-\d+-\d+)$/); if(m)return{type:'exercise',id:parseInt(m[1]),reps:parseInt(m[2]),tempo:m[3]}; throw new Error(`Format: ${tok}`); }
 function parseSequence(input){
   try{
@@ -647,7 +770,7 @@ function renderExercises(){
   let list=document.getElementById("exercise-list"); list.innerHTML="";
   for(let i=0;i<exercises.length;i++){
     let ex=exercises[i],d=document.createElement("div");
-    d.style.cssText="border-bottom:1px solid #ccc;padding:8px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center";
+    d.style.cssText="border-bottom:1px solid var(--border-color);padding:8px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center";
     let n=`ex-n-${i}`,r=`ex-r-${i}`,wt=`ex-t-${i}`,im=`ex-i-${i}`,f=`ex-f-${i}`;
     d.innerHTML=`<span style="font-weight:bold">${ex.id}</span>
       <label for="${n}" style="display:none">Nom</label><input id="${n}" type="text" value="${(ex.name||"").replace(/"/g,'&quot;')}" onchange="exercises[${i}].name=this.value;saveAll();renderExercises()" style="width:120px">
@@ -655,26 +778,118 @@ function renderExercises(){
       <label for="${wt}" style="display:none">Temps</label><input id="${wt}" type="number" value="${ex.workTime||40}" min="1" max="300" onchange="exercises[${i}].workTime=Math.max(1,parseInt(this.value)||30);saveAll()" style="width:60px">
       <label for="${im}" style="display:none">URL</label><input id="${im}" type="text" placeholder="URL image" value="${ex.image||''}" onchange="exercises[${i}].image=this.value;saveAll()" style="width:150px">
       <label for="${f}" style="display:none">Fichier</label><input id="${f}" type="file" accept="image/*" onchange="((fl)=>{if(fl){let rd=new FileReader();rd.onload=e=>{exercises[${i}].image=e.target.result;saveAll();renderExercises();};rd.readAsDataURL(fl);}})(this.files[0])">
-      <button onclick="if(confirm('${t('confirmDelete')} ?')){exercises.splice(${i},1);updateIdMapping();saveAll();renderExercises();}" style="background:#dc3545;padding:4px 12px">✕</button>
-      <span style="font-size:10px;color:#888">${(ex.uid||"").slice(0,6)}</span>`;
+      <button onclick="if(confirm('${t('confirmDelete')} ?')){exercises.splice(${i},1);updateIdMapping();saveAll();renderExercises();}" style="background:var(--delete-bg);padding:4px 12px">✕</button>
+      <span style="font-size:10px;color:var(--text-color);opacity:0.6">${(ex.uid||"").slice(0,6)}</span>`;
     list.appendChild(d);
   }
 }
 function cleanInvalidExercises(){ let b=exercises.length; exercises=exercises.filter(ex=>ex&&typeof ex.name==='string'&&ex.name.trim()!==''&&ex.name!=='undefined'&&ex.name!=='null'); if(exercises.length!==b){updateIdMapping();saveAll();showAutoSave(`${t('cleanDone')} ${b-exercises.length} ${t('exercisesRemoved')}`);renderExercises();}else showAutoSave(t('cleanNone')); }
 function cleanSequenceFromMissingIds(){ let blocks=parseSequence(sequenceInputValue),validIds=new Set(exercises.map(e=>e.id)),modified=false,nb=[]; for(let bl of blocks){if(bl.type==='exercise'&&!validIds.has(bl.id)){modified=true;continue;}nb.push(bl);} if(modified){let pts=[];for(let bl of nb){if(bl.type==='rest')pts.push(`P${bl.duration}`);else if(bl.duration!==undefined)pts.push(`${bl.id}:${bl.duration}`);else if(bl.tempo&&bl.reps)pts.push(`${bl.id}:${bl.reps}@${bl.tempo}`);}sequenceInputValue=pts.join('-');document.getElementById("sequence-input").value=sequenceInputValue;showAutoSave(t('seqCleaned'));saveAll();} }
 
-// ===== PROGRAMMES =====
-function loadSavedPrograms(){ let s=localStorage.getItem('chronoPro_savedPrograms'); savedPrograms=s?JSON.parse(s):[]; let sel=document.getElementById("program-select"); sel.innerHTML=`<option value="">${t('loadProgram')}</option>`; for(let p of savedPrograms){let o=document.createElement("option");o.value=p.name;o.textContent=p.name;sel.appendChild(o);} }
-function saveCurrentProgram(){ let ns=document.getElementById("sequence-input").value,nst=parseInt(document.getElementById("setup-time").value)||15; if(ns!==sequenceInputValue){sequenceInputValue=ns;setupTime=nst;} let name=prompt(t('programName'),"Mon programme"); if(!name)return; let ex=savedPrograms.find(p=>p.name===name); if(ex&&!confirm(`${t('confirmOverwrite')} "${name}" ?`))return; if(ex){ex.sequence=sequenceInputValue;ex.setupTime=setupTime;}else savedPrograms.push({name,sequence:sequenceInputValue,setupTime}); localStorage.setItem('chronoPro_savedPrograms',JSON.stringify(savedPrograms)); loadSavedPrograms();showAutoSave(t('progSaved')); }
-function deleteSelectedProgram(){ let sel=document.getElementById("program-select"),name=sel.value; if(!name){alert(t('selectProgram'));return;} if(!confirm(`${t('confirmDelete')} "${name}" ?`))return; savedPrograms=savedPrograms.filter(p=>p.name!==name); localStorage.setItem('chronoPro_savedPrograms',JSON.stringify(savedPrograms)); loadSavedPrograms();showAutoSave(t('progDeleted')); }
-function loadSelectedProgram(){ let name=document.getElementById("program-select").value; if(!name)return; let prog=savedPrograms.find(p=>p.name===name); if(prog){sequenceInputValue=prog.sequence;setupTime=prog.setupTime;document.getElementById("sequence-input").value=sequenceInputValue;document.getElementById("setup-time").value=setupTime;saveAll();resetWorkout();updateTotalTimeDisplay();showAutoSave(`"${name}" ${t('progLoaded')}`);} }
-function exportProgram(){ let blocks=parseSequence(sequenceInputValue),usedIds=new Set(); for(let b of blocks)if(b.type==='exercise')usedIds.add(b.id); let usedEx=exercises.filter(ex=>usedIds.has(ex.id)).map(({id,uid,name,reps,workTime,image})=>({id,uid,name,reps,workTime,image})); let name=prompt(t('exportProgramName'),"Mon programme"); if(!name)return; let blob=new Blob([JSON.stringify({name,sequence:sequenceInputValue,setupTime,exercises:usedEx},null,2)],{type:'application/json'}); let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`program_${name.replace(/[^a-z0-9]/gi,'_')}.json`;a.click();URL.revokeObjectURL(blob.href); }
-function importProgramFile(file){ let reader=new FileReader(); reader.onload=ev=>{try{let prog=JSON.parse(ev.target.result);if(!prog.sequence||!prog.exercises)throw new Error(t('invalidFile'));let m=new Map();for(let ie of prog.exercises){if(!ie.uid)ie.uid=uuid();let ex2=exercises.find(e=>e.uid===ie.uid);if(ex2)m.set(ie.uid,ex2.id);else{let nid=getNextId();exercises.push({id:nid,uid:ie.uid,name:ie.name,reps:ie.reps,workTime:ie.workTime,image:ie.image||""});m.set(ie.uid,nid);}}let ns=prog.sequence;for(let ie of prog.exercises){let oid=ie.id,nid=m.get(ie.uid);if(oid&&nid)ns=ns.replace(new RegExp(`\\b${oid}(?=:|@)`,'g'),nid);}sequenceInputValue=ns;setupTime=prog.setupTime!==undefined?prog.setupTime:setupTime;document.getElementById("sequence-input").value=sequenceInputValue;document.getElementById("setup-time").value=setupTime;saveAll();showAutoSave(t('importedFusion'));loadSavedPrograms();resetWorkout();updateTotalTimeDisplay();}catch(err){alert("Erreur: "+err.message);}};reader.readAsText(file); }
-function exportAllPrograms(){ if(!savedPrograms.length){alert(t('noPrograms'));return;} let blob=new Blob([JSON.stringify(savedPrograms.map(p=>({name:p.name,sequence:p.sequence,setupTime:p.setupTime})),null,2)],{type:'application/json'}); let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`tous_programmes_${new Date().toISOString().slice(0,19)}.json`;a.click();URL.revokeObjectURL(blob.href);showAutoSave(t('allExported')); }
-function importPrograms(file){ let reader=new FileReader(); reader.onload=ev=>{try{let imp=JSON.parse(ev.target.result);if(!Array.isArray(imp))throw new Error(t('invalidFile'));let count=0;for(let prog of imp){if(!prog.name||!prog.sequence)continue;let ex2=savedPrograms.find(p=>p.name===prog.name);if(ex2){if(confirm(`${t('confirmOverwrite')} "${prog.name}" ?`)){ex2.sequence=prog.sequence;ex2.setupTime=prog.setupTime||15;count++;}}else{savedPrograms.push({name:prog.name,sequence:prog.sequence,setupTime:prog.setupTime||15});count++;}}if(count>0){localStorage.setItem('chronoPro_savedPrograms',JSON.stringify(savedPrograms));loadSavedPrograms();showAutoSave(`${count} ${t('importSuccess')}`);}else showAutoSave(t('noNewImported'));}catch(err){alert("Erreur: "+err.message);}};reader.readAsText(file); }
-function exportWeekText(){ let tt=totalTime(),content=`=== ${t('configTitle')} ===\n\n${t('sequenceLabel')}\n${sequenceInputValue}\n\n${t('totalDuration')} : ${Math.floor(tt/60)}m ${tt%60}s\n\n`; let blocks=parseSequence(sequenceInputValue),usedIds=new Set(); for(let b of blocks)if(b.type==='exercise')usedIds.add(b.id); for(let id of usedIds){let ex=getExerciseById(id);if(ex)content+=`- [${id}] ${ex.name} (${ex.reps}) - ${ex.workTime}s\n`;} let blob=new Blob([content],{type:'text/plain'}); let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`semaine_${new Date().toISOString().slice(0,10)}.txt`;a.click();URL.revokeObjectURL(blob.href); }
-function exportFull(){ let blob=new Blob([JSON.stringify({exercises,sequence:sequenceInputValue,setupTime,voiceEnabled:false,savedPrograms},null,2)],{type:'application/json'}); let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`chrono_full_${new Date().toISOString().slice(0,19)}.json`;a.click();URL.revokeObjectURL(blob.href); }
-function importFull(file){ let reader=new FileReader(); reader.onload=ev=>{try{let data=JSON.parse(ev.target.result);exercises=data.exercises||[];sequenceInputValue=data.sequence||sequenceInputValue;setupTime=data.setupTime||setupTime;voiceEnabled=false;savedPrograms=data.savedPrograms||[];localStorage.setItem('chronoPro_exercises',JSON.stringify(exercises));localStorage.setItem('chronoPro_sequence',sequenceInputValue);localStorage.setItem('chronoPro_setupTime',setupTime);localStorage.setItem('chronoPro_savedPrograms',JSON.stringify(savedPrograms));renderExercises();document.getElementById("sequence-input").value=sequenceInputValue;document.getElementById("setup-time").value=setupTime;loadSavedPrograms();resetWorkout();updateTotalTimeDisplay();alert(t('importComplete'));}catch(err){alert(t('invalidFile')+": "+err.message);}};reader.readAsText(file); }
+// ===== PROGRAMMES (tri + édition par écrasement) =====
+function loadSavedPrograms(){ 
+  let s=localStorage.getItem('chronoPro_savedPrograms'); 
+  savedPrograms=s?JSON.parse(s):[];
+  savedPrograms.sort((a,b)=>a.name.localeCompare(b.name));
+  let sel=document.getElementById("program-select"); 
+  sel.innerHTML=`<option value="">${t('loadProgram')}</option>`; 
+  for(let p of savedPrograms){
+    let o=document.createElement("option");
+    o.value=p.name;
+    o.textContent=p.name;
+    sel.appendChild(o);
+  } 
+}
+function saveCurrentProgram(){ 
+  let ns=document.getElementById("sequence-input").value;
+  let nst=parseInt(document.getElementById("setup-time").value)||15; 
+  if(ns!==sequenceInputValue){ sequenceInputValue=ns; setupTime=nst; }
+  let selectedName = document.getElementById("program-select").value;
+  if(selectedName && savedPrograms.some(p=>p.name===selectedName)){
+    if(confirm(`Voulez-vous écraser le programme "${selectedName}" ?`)){
+      let prog = savedPrograms.find(p=>p.name===selectedName);
+      prog.sequence = sequenceInputValue;
+      prog.setupTime = setupTime;
+      localStorage.setItem('chronoPro_savedPrograms', JSON.stringify(savedPrograms));
+      loadSavedPrograms();
+      document.getElementById("program-select").value = selectedName;
+      showAutoSave(t('progSaved'));
+      return;
+    } else return;
+  }
+  let name = prompt(t('programName'), "Mon programme"); 
+  if(!name) return; 
+  let existing = savedPrograms.find(p=>p.name===name); 
+  if(existing && !confirm(`${t('confirmOverwrite')} "${name}" ?`)) return; 
+  if(existing){ existing.sequence = sequenceInputValue; existing.setupTime = setupTime; } 
+  else { savedPrograms.push({name, sequence: sequenceInputValue, setupTime}); } 
+  localStorage.setItem('chronoPro_savedPrograms', JSON.stringify(savedPrograms)); 
+  loadSavedPrograms(); 
+  document.getElementById("program-select").value = name; 
+  showAutoSave(t('progSaved')); 
+}
+function deleteSelectedProgram(){ 
+  let sel=document.getElementById("program-select"),name=sel.value; 
+  if(!name){ alert(t('selectProgram')); return; } 
+  if(!confirm(`${t('confirmDelete')} "${name}" ?`)) return; 
+  savedPrograms=savedPrograms.filter(p=>p.name!==name); 
+  localStorage.setItem('chronoPro_savedPrograms', JSON.stringify(savedPrograms)); 
+  loadSavedPrograms(); 
+  showAutoSave(t('progDeleted')); 
+}
+function loadSelectedProgram(){ 
+  let name=document.getElementById("program-select").value; 
+  if(!name) return; 
+  let prog=savedPrograms.find(p=>p.name===name); 
+  if(prog){ 
+    sequenceInputValue=prog.sequence; 
+    setupTime=prog.setupTime; 
+    document.getElementById("sequence-input").value=sequenceInputValue; 
+    document.getElementById("setup-time").value=setupTime; 
+    saveAll(); 
+    resetWorkout(); 
+    updateTotalTimeDisplay(); 
+    showAutoSave(`"${name}" ${t('progLoaded')}`);
+  } 
+}
+function exportProgram(){ 
+  let blocks=parseSequence(sequenceInputValue),usedIds=new Set(); 
+  for(let b of blocks)if(b.type==='exercise')usedIds.add(b.id); 
+  let usedEx=exercises.filter(ex=>usedIds.has(ex.id)).map(({id,uid,name,reps,workTime,image})=>({id,uid,name,reps,workTime,image})); 
+  let name=prompt(t('exportProgramName'),"Mon programme"); 
+  if(!name) return; 
+  let blob=new Blob([JSON.stringify({name,sequence:sequenceInputValue,setupTime,exercises:usedEx},null,2)],{type:'application/json'}); 
+  let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`program_${name.replace(/[^a-z0-9]/gi,'_')}.json`;a.click();URL.revokeObjectURL(blob.href); 
+}
+function importProgramFile(file){ 
+  let reader=new FileReader(); 
+  reader.onload=ev=>{try{let prog=JSON.parse(ev.target.result);if(!prog.sequence||!prog.exercises)throw new Error(t('invalidFile'));let m=new Map();for(let ie of prog.exercises){if(!ie.uid)ie.uid=uuid();let ex2=exercises.find(e=>e.uid===ie.uid);if(ex2)m.set(ie.uid,ex2.id);else{let nid=getNextId();exercises.push({id:nid,uid:ie.uid,name:ie.name,reps:ie.reps,workTime:ie.workTime,image:ie.image||""});m.set(ie.uid,nid);}}let ns=prog.sequence;for(let ie of prog.exercises){let oid=ie.id,nid=m.get(ie.uid);if(oid&&nid)ns=ns.replace(new RegExp(`\\b${oid}(?=:|@)`,'g'),nid);}sequenceInputValue=ns;setupTime=prog.setupTime!==undefined?prog.setupTime:setupTime;document.getElementById("sequence-input").value=sequenceInputValue;document.getElementById("setup-time").value=setupTime;saveAll();showAutoSave(t('importedFusion'));loadSavedPrograms();resetWorkout();updateTotalTimeDisplay();}catch(err){alert("Erreur: "+err.message);}};reader.readAsText(file); 
+}
+function exportAllPrograms(){ 
+  if(!savedPrograms.length){alert(t('noPrograms'));return;} 
+  let blob=new Blob([JSON.stringify(savedPrograms.map(p=>({name:p.name,sequence:p.sequence,setupTime:p.setupTime})),null,2)],{type:'application/json'}); 
+  let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`tous_programmes_${new Date().toISOString().slice(0,19)}.json`;a.click();URL.revokeObjectURL(blob.href);showAutoSave(t('allExported')); 
+}
+function importPrograms(file){ 
+  let reader=new FileReader(); 
+  reader.onload=ev=>{try{let imp=JSON.parse(ev.target.result);if(!Array.isArray(imp))throw new Error(t('invalidFile'));let count=0;for(let prog of imp){if(!prog.name||!prog.sequence)continue;let ex2=savedPrograms.find(p=>p.name===prog.name);if(ex2){if(confirm(`${t('confirmOverwrite')} "${prog.name}" ?`)){ex2.sequence=prog.sequence;ex2.setupTime=prog.setupTime||15;count++;}}else{savedPrograms.push({name:prog.name,sequence:prog.sequence,setupTime:prog.setupTime||15});count++;}}if(count>0){localStorage.setItem('chronoPro_savedPrograms',JSON.stringify(savedPrograms));loadSavedPrograms();showAutoSave(`${count} ${t('importSuccess')}`);}else showAutoSave(t('noNewImported'));}catch(err){alert("Erreur: "+err.message);}};reader.readAsText(file); 
+}
+function exportWeekText(){ 
+  let tt=totalTime(),content=`=== ${t('configTitle')} ===\n\n${t('sequenceLabel')}\n${sequenceInputValue}\n\n${t('totalDuration')} : ${Math.floor(tt/60)}m ${tt%60}s\n\n`; 
+  let blocks=parseSequence(sequenceInputValue),usedIds=new Set(); 
+  for(let b of blocks)if(b.type==='exercise')usedIds.add(b.id); 
+  for(let id of usedIds){let ex=getExerciseById(id);if(ex)content+=`- [${id}] ${ex.name} (${ex.reps}) - ${ex.workTime}s\n`;} 
+  let blob=new Blob([content],{type:'text/plain'}); 
+  let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`semaine_${new Date().toISOString().slice(0,10)}.txt`;a.click();URL.revokeObjectURL(blob.href); 
+}
+function exportFull(){ 
+  let blob=new Blob([JSON.stringify({exercises,sequence:sequenceInputValue,setupTime,voiceEnabled:false,savedPrograms},null,2)],{type:'application/json'}); 
+  let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`chrono_full_${new Date().toISOString().slice(0,19)}.json`;a.click();URL.revokeObjectURL(blob.href); 
+}
+function importFull(file){ 
+  let reader=new FileReader(); 
+  reader.onload=ev=>{try{let data=JSON.parse(ev.target.result);exercises=data.exercises||[];sequenceInputValue=data.sequence||sequenceInputValue;setupTime=data.setupTime||setupTime;voiceEnabled=false;savedPrograms=data.savedPrograms||[];localStorage.setItem('chronoPro_exercises',JSON.stringify(exercises));localStorage.setItem('chronoPro_sequence',sequenceInputValue);localStorage.setItem('chronoPro_setupTime',setupTime);localStorage.setItem('chronoPro_savedPrograms',JSON.stringify(savedPrograms));renderExercises();document.getElementById("sequence-input").value=sequenceInputValue;document.getElementById("setup-time").value=setupTime;loadSavedPrograms();resetWorkout();updateTotalTimeDisplay();alert(t('importComplete'));}catch(err){alert(t('invalidFile')+": "+err.message);}};reader.readAsText(file); 
+}
 
 function saveAll(){ localStorage.setItem('chronoPro_exercises',JSON.stringify(exercises));localStorage.setItem('chronoPro_sequence',sequenceInputValue);localStorage.setItem('chronoPro_setupTime',setupTime);updateTotalTimeDisplay();showAutoSave(t('saved'));updateDisplay(); }
 function showAutoSave(msg){ let el=document.getElementById("autosave-status");if(el){el.textContent=msg;el.style.opacity=1;setTimeout(()=>el.style.opacity=0,2500);}else console.log(msg); }
@@ -735,6 +950,8 @@ function init(){
   document.getElementById("import-programs-btn").onclick=()=>{let i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=e=>{if(e.target.files[0])importPrograms(e.target.files[0]);};i.click();};
 
   document.getElementById("lang-select").addEventListener("change", (e)=>setLanguage(e.target.value));
+  
+  initDarkMode();
 
   if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').then(r=>console.log('SW ok',r)).catch(e=>console.log('SW err',e));
 }
