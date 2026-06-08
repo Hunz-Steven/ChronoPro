@@ -134,7 +134,7 @@
   <button id="config-btn" data-i18n="config">⚙ Configurer</button>
   <button id="dark-mode-btn" data-i18n="darkMode">🌙 Mode sombre</button>
   <div id="autosave-status"></div>
-  <div class="version">Chrono Pro V10.2</div>
+  <div class="version">Chrono Pro V10.3</div>
 </div>
 
 <div id="config-panel" class="config-panel">
@@ -630,11 +630,11 @@ function renderExercises(){
     d.style.cssText = "border-bottom:1px solid var(--border-color);padding:8px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center";
     d.innerHTML = `
       <span style="font-weight:bold">${ex.id}</span>
-      <input type="text" value="${(ex.name||"").replace(/"/g,'&quot;')}" onchange="exercises[${i}].name=this.value;saveAll();renderExercises();" style="width:120px">
-      <input type="text" value="${(ex.reps||"").replace(/"/g,'&quot;')}" onchange="exercises[${i}].reps=this.value;saveAll();" style="width:80px">
-      <input type="text" placeholder="URL image" value="${ex.image||''}" onchange="exercises[${i}].image=this.value;saveAll();" style="width:150px">
-      <input type="file" accept="image/*" onchange="((fl)=>{if(fl){const rd=new FileReader();rd.onload=e=>{exercises[${i}].image=e.target.result;saveAll();renderExercises();};rd.readAsDataURL(fl);}})(this.files[0])">
-      <button onclick="if(confirm('${t('confirmDelete')} ?')){exercises.splice(${i},1);updateIdMapping();saveAll();renderExercises();}" style="background:var(--delete-bg);padding:4px 12px">✕</button>
+      <input type="text" value="${(ex.name||"").replace(/"/g,'&quot;')}" onchange="state.exercises[${i}].name=this.value;saveAll();renderExercises();" style="width:120px">
+      <input type="text" value="${(ex.reps||"").replace(/"/g,'&quot;')}" onchange="state.exercises[${i}].reps=this.value;saveAll();" style="width:80px">
+      <input type="text" placeholder="URL image" value="${ex.image||''}" onchange="state.exercises[${i}].image=this.value;saveAll();" style="width:150px">
+      <input type="file" accept="image/*" onchange="((fl)=>{if(fl){const rd=new FileReader();rd.onload=e=>{state.exercises[${i}].image=e.target.result;saveAll();renderExercises();};rd.readAsDataURL(fl);}})(this.files[0])">
+      <button onclick="if(confirm('${t('confirmDelete')} ?')){state.exercises.splice(${i},1);updateIdMapping();saveAll();renderExercises();}" style="background:var(--delete-bg);padding:4px 12px">✕</button>
       <span style="font-size:10px;opacity:0.6">${(ex.uid||"").slice(0,6)}</span>
     `;
     list.appendChild(d);
@@ -1065,7 +1065,10 @@ function init(){
   initDarkMode();
   applyTranslations();
   
-  if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(e=>console.log('SW err',e));
+  // Service worker ignoré silencieusement en file://
+  if('serviceWorker' in navigator && location.protocol !== 'file:') {
+    navigator.serviceWorker.register('./sw.js').catch(e=>console.log('SW err',e));
+  }
 }
 init();
 </script>
