@@ -499,9 +499,12 @@ function startWorkout(){
   getAudioContext();
   if(state.isPaused){
     state.isPaused = false;
-    if(state.isTempoMode && currentTempo && !currentTempo.isActive){
+    // Reprise du tempo
+    if(state.isTempoMode && currentTempo){
       currentTempo.start();
-    } else if(!state.isTempoMode && state.timerInterval === null){
+    } 
+    // Reprise du mode classique (durée)
+    else if(!state.isTempoMode && state.timerInterval === null){
       state.timerInterval = setInterval(timerTick, 1000);
     }
     document.getElementById("start-btn").innerHTML = t('start');
