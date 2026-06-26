@@ -166,6 +166,21 @@
       <button id="clean-exercises-btn" class="clean-btn" data-i18n="cleanExercises">🧹 Nettoyer</button>
     </div>
   </details></div>
+  <!-- NOUVEAU : PANNEAU DE RÉGLAGE DES SONS -->
+	<div class="advanced-zone">
+	<details>
+		<summary><strong>🔊 Personnalisation des bips (tempo)</strong></summary>
+		<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+		<label>⬇️ Descendre (Hz) : <input type="number" id="beep-down" value="300" step="10" min="100" max="2000" style="width:70px"></label>
+		<label>⏸️ Bas (Hz) : <input type="number" id="beep-hold-down" value="500" step="10" min="100" max="2000" style="width:70px"></label>
+		<label>⬆️ Monter (Hz) : <input type="number" id="beep-up" value="800" step="10" min="100" max="2000" style="width:70px"></label>
+		<label>⏸️ Haut (Hz) : <input type="number" id="beep-hold-up" value="500" step="10" min="100" max="2000" style="width:70px"></label>
+		<label style="grid-column:span 2">🔁 Fin de répétition (Hz) : <input type="number" id="beep-rep" value="1000" step="10" min="100" max="2000" style="width:70px"></label>
+		</div>
+		<button id="save-beep-btn" style="margin-top:8px">💾 Sauvegarder mes fréquences</button>
+		<div class="help">Les bips de changement de phase sont automatiquement plus aigus (+120 Hz).</div>
+	</details>
+	</div>
   <h4 data-i18n="exerciseListTitle">📋 Liste des exercices</h4>
   <div id="exercise-list"></div>
   <div class="flex-buttons">
@@ -197,7 +212,40 @@ const BASE_TR = {
   pl: { ready:"Gotowy", preparation:"Przygotowanie", rest:"Odpoczynek", work:"PRACA", tempo:"TEMPO", nextExercise:"Następne ćwiczenie", firstExercise:"Pierwsze ćwiczenie", exerciseLabel:"Ćwiczenie", prev:"◀ Poprzedni", next:"Następny ▶", start:"▶ Start", pause:"⏸ Pauza", reset:"⟳ Reset", config:"⚙ Ustawienia", configTitle:"Ustawienia", setupLabel:"Przygotowanie (sekundy):", sequenceLabel:"Sekwencja treningowa:", sequenceHelp:"Przykład: 30x(4:10-P10)-P30-30x(11:10-P20). Format: 8:40 (czas) lub 8:6@3-0-1-0 (tempo). Odpoczynek: P30.", advancedTitle:"📁 Zarządzanie programami (zaawansowane)", programsLabel:"Zapisane programy:", saveProgram:"💾 Zapisz", renameProgram:"✏️ Zmień nazwę", deleteProgram:"🗑 Usuń", exportProgram:"📤 Eksportuj sekwencję", importProgram:"📥 Importuj sekwencję", exportWeek:"📄 Eksportuj tekst", exportAllPrograms:"📦 Eksportuj wszystkie", importPrograms:"📥 Importuj programy", exportFull:"💾 Eksportuj konfigurację", importFull:"📥 Importuj konfigurację", cleanExercises:"🧹 Wyczyść", exerciseListTitle:"📋 Lista ćwiczeń", addExercise:"+ Dodaj ćwiczenie", saveConfig:"💾 Zapisz", finished:"KONIEC!", completed:"Ukończono", wellDone:"Dobra robota!", workDuration:"PRACA (czas)", restDuration:"ODPOCZYNEK", tempoMode:"PRACA (TEMPO)", setupPhase:"Przygotowanie", pauseStatus:"⏸ Wstrzymane", pauseTempo:"⏸ Tempo wstrzymane", resume:"Wznów", blockLabel:"Blok", totalDuration:"Całkowity czas", loadProgram:"-- Załaduj program --", confirmDelete:"Usuń", confirmOverwrite:"Nadpisz", programName:"Nazwa programu:", renameProgramPrompt:"Nowa nazwa programu:", renameSuccess:"Program zmieniono nazwę", exportProgramName:"Nazwa programu do eksportu:", invalidFile:"Nieprawidłowy format", importSuccess:"zaimportowano pomyślnie", noPrograms:"Brak zapisanych programów", selectProgram:"Wybierz program", importedFusion:"Program zaimportowany (scalenie UUID)", importComplete:"Pełny import zakończony sukcesem.", cleanDone:"🧹 Wyczyszczono:", cleanNone:"Nie znaleziono nieprawidłowych ćwiczeń.", seqCleaned:"⚠️ Sekwencja oczyszczona (usunięto nieprawidłowe ID).", saved:"✓ Zapisano", progSaved:"Program zapisany", progDeleted:"Program usunięty", progLoaded:"załadowano i zresetowano.", allExported:"Wszystkie programy wyeksportowane.", noNewImported:"Nie zaimportowano nowych programów.", exercisesRemoved:"usunięto nieprawidłowe ćwiczenie(a).", darkMode:"🌙 Tryb ciemny", lightMode:"☀️ Tryb jasny" },
   tr: { ready:"Hazır", preparation:"Hazırlık", rest:"Dinlenme", work:"ÇALIŞMA", tempo:"TEMPO", nextExercise:"Sonraki egzersiz", firstExercise:"İlk egzersiz", exerciseLabel:"Egzersiz", prev:"◀ Önceki", next:"Sonraki ▶", start:"▶ Başlat", pause:"⏸ Duraklat", reset:"⟳ Sıfırla", config:"⚙ Ayarlar", configTitle:"Ayarlar", setupLabel:"Hazırlık (saniye):", sequenceLabel:"Antrenman sırası:", sequenceHelp:"Örnek: 30x(4:10-P10)-P30-30x(11:10-P20). Formatlar: 8:40 (süre) veya 8:6@3-0-1-0 (tempo). Dinlenme: P30.", advancedTitle:"📁 Program yönetimi (gelişmiş)", programsLabel:"Kayıtlı programlar:", saveProgram:"💾 Kaydet", renameProgram:"✏️ Yeniden adlandır", deleteProgram:"🗑 Sil", exportProgram:"📤 Sırayı dışa aktar", importProgram:"📥 Sırayı içe aktar", exportWeek:"📄 Metin olarak dışa aktar", exportAllPrograms:"📦 Tümünü dışa aktar", importPrograms:"📥 Programları içe aktar", exportFull:"💾 Yapılandırmayı dışa aktar", importFull:"📥 Yapılandırmayı içe aktar", cleanExercises:"🧹 Temizle", exerciseListTitle:"📋 Egzersiz listesi", addExercise:"+ Egzersiz ekle", saveConfig:"💾 Kaydet", finished:"BİTTİ!", completed:"Tamamlandı", wellDone:"Aferin!", workDuration:"ÇALIŞMA (süre)", restDuration:"DİNLENME", tempoMode:"ÇALIŞMA (TEMPO)", setupPhase:"Hazırlık", pauseStatus:"⏸ Duraklatıldı", pauseTempo:"⏸ Tempo duraklatıldı", resume:"Devam et", blockLabel:"Blok", totalDuration:"Toplam süre", loadProgram:"-- Program yükle --", confirmDelete:"Sil", confirmOverwrite:"Üzerine yaz", programName:"Program adı:", renameProgramPrompt:"Programın yeni adı:", renameSuccess:"Program yeniden adlandırıldı", exportProgramName:"Dışa aktarılacak program adı:", invalidFile:"Geçersiz format", importSuccess:"başarıyla içe aktarıldı", noPrograms:"Kayıtlı program yok", selectProgram:"Bir program seçin", importedFusion:"Program içe aktarıldı (UUID birleştirme)", importComplete:"Tam içe aktarma başarılı.", cleanDone:"🧹 Temizlendi:", cleanNone:"Geçersiz egzersiz bulunamadı.", seqCleaned:"⚠️ Sıra temizlendi (geçersiz ID'ler kaldırıldı).", saved:"✓ Kaydedildi", progSaved:"Program kaydedildi", progDeleted:"Program silindi", progLoaded:"yüklendi ve sıfırlandı.", allExported:"Tüm programlar dışa aktarıldı.", noNewImported:"Yeni program içe aktarılmadı.", exercisesRemoved:"geçersiz egzersiz(ler) kaldırıldı.", darkMode:"🌙 Koyu mod", lightMode:"☀️ Aydınlık mod" }
 };
+// ==================== GESTION DES FRÉQUENCES AUDIO ====================
+function getBeepConfig(){
+  const defaultFreqs = { down: 300, holdDown: 500, up: 800, holdUp: 500, rep: 1000 };
+  try {
+    const saved = localStorage.getItem('chronoPro_beepFreqs');
+    if(saved) return { ...defaultFreqs, ...JSON.parse(saved) };
+  } catch(e) {}
+  return defaultFreqs;
+}
 
+function getBeepFreq(type){
+  return getBeepConfig()[type] || 500;
+}
+
+function saveBeepFreqs(){
+  const freqs = {
+    down: parseInt(document.getElementById('beep-down').value) || 300,
+    holdDown: parseInt(document.getElementById('beep-hold-down').value) || 500,
+    up: parseInt(document.getElementById('beep-up').value) || 800,
+    holdUp: parseInt(document.getElementById('beep-hold-up').value) || 500,
+    rep: parseInt(document.getElementById('beep-rep').value) || 1000
+  };
+  localStorage.setItem('chronoPro_beepFreqs', JSON.stringify(freqs));
+  showAutoSave('Fréquences sauvegardées');
+}
+
+function loadBeepFreqsIntoUI(){
+  const cfg = getBeepConfig();
+  document.getElementById('beep-down').value = cfg.down;
+  document.getElementById('beep-hold-down').value = cfg.holdDown;
+  document.getElementById('beep-up').value = cfg.up;
+  document.getElementById('beep-hold-up').value = cfg.holdUp;
+  document.getElementById('beep-rep').value = cfg.rep;
+}
 let currentLang = localStorage.getItem('chronoPro_lang') || 'fr';
 let currentTr = BASE_TR[currentLang] || BASE_TR.fr;
 function t(key){ return currentTr[key] || BASE_TR.fr[key] || key; }
@@ -212,6 +260,9 @@ const state = {
   savedPrograms: [],
   cachedBlocks: null, lastSequence: "", totalExercises: 0
 };
+
+// ✅ CORRECTION N°1 : déclaration de la variable globale manquante
+let currentTempo = null;
 
 // ==================== UTILITAIRES ====================
 function uuid(){ return 'xxxx-4xxx-yxxx'.replace(/[xy]/g,c=>{let r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);return v.toString(16);}); }
@@ -264,8 +315,7 @@ let audioCtx=null, lastBeepTime=0;
 function getAudioContext(){ if(!audioCtx){ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); document.body.addEventListener('touchstart',()=>audioCtx.resume(),{once:true}); document.body.addEventListener('click',()=>audioCtx.resume(),{once:true}); } return audioCtx; }
 function beep(freq=800,dur=200){ try{ let now=Date.now(); if(now-lastBeepTime<50)return; lastBeepTime=now; let ctx=getAudioContext(); let o=ctx.createOscillator(); let g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value=freq; o.type='sine'; g.gain.setValueAtTime(0.001,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.4,ctx.currentTime+0.01); g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur/1000); o.start(); o.stop(ctx.currentTime+dur/1000); }catch(e){} }
 
-// ==================== TEMPO CONTROLLER ====================
-let currentTempo = null;
+// ==================== TEMPO CONTROLLER ULTRA-PRÉCIS ====================
 class TempoController {
   constructor(block, onComplete){
     this.block = block;
@@ -275,36 +325,83 @@ class TempoController {
     this.currentRep = 1;
     this.currentPhase = 0;
     this.phases = [...this.parts];
-    this.interval = null;
+    this.timeout = null;
     this.isActive = false;
+    this.isPaused = false;
+    this.nextTickTime = 0;
   }
+
   start(){
     if(state.timerInterval) clearInterval(state.timerInterval);
-    if(state.tempoInterval) clearInterval(state.tempoInterval);
+    if(this.timeout) clearTimeout(this.timeout);
     state.isTempoMode = true;
     state.isPaused = false;
     this.isActive = true;
+    this.isPaused = false;
+    // Sauter les phases initiales à 0
+    while(this.phases[this.currentPhase] === 0){
+      this.nextPhase();
+      if(!this.isActive) return;
+    }
     this.updateDisplay();
-    this.interval = setInterval(()=>this.tick(), 1000);
-    state.tempoInterval = this.interval;
+    this.emitPhaseBeep(); // Bip de début de phase
+    this.nextTickTime = performance.now() + 1000;
+    this.scheduleTick();
+    state.tempoInterval = this.timeout;
     state.currentRep = this.currentRep;
     state.currentPhase = this.currentPhase;
     state.tempoPhases = this.phases;
     state.tempoOriginal = [...this.parts];
     state.totalReps = this.totalReps;
   }
-  tick(){
-    if(state.isPaused) return;
-    if(this.phases[this.currentPhase] === 0){ this.nextPhase(); return; }
-    this.phases[this.currentPhase]--;
-    if(this.currentPhase===0) beep(300,80);
-    else if(this.currentPhase===2) beep(800,80);
-    else beep(500,40);
-    this.updateDisplay();
-    if(this.phases[this.currentPhase]===0) this.nextPhase();
+
+  scheduleTick(){
+    if(this.timeout) clearTimeout(this.timeout);
+    const now = performance.now();
+    const delay = Math.max(0, this.nextTickTime - now);
+    this.timeout = setTimeout(() => this.tick(), delay);
+    state.tempoInterval = this.timeout;
   }
+
+  tick(){
+    if(this.isPaused || !this.isActive) return;
+
+    // Sauter les phases à 0
+    while(this.phases[this.currentPhase] === 0){
+      this.nextPhase();
+      if(!this.isActive) return;
+    }
+
+    this.phases[this.currentPhase]--;
+    this.emitSecondBeep();
+    this.updateDisplay();
+
+    if(this.phases[this.currentPhase] === 0){
+      this.nextPhase();
+    }
+
+    if(this.isActive){
+      this.nextTickTime += 1000;
+      this.scheduleTick();
+    }
+  }
+
+  pause(){
+    if(!this.isActive) return;
+    this.isPaused = true;
+    if(this.timeout){ clearTimeout(this.timeout); this.timeout = null; }
+    state.tempoInterval = null;
+  }
+
+  resume(){
+    if(!this.isPaused || !this.isActive) return;
+    this.isPaused = false;
+    this.nextTickTime = performance.now() + 1000;
+    this.scheduleTick();
+  }
+
   nextPhase(){
-    if(state.isPaused) return;
+    if(this.isPaused || !this.isActive) return;
     this.currentPhase++;
     if(this.currentPhase >= 4){
       this.currentRep++;
@@ -316,25 +413,52 @@ class TempoController {
       this.currentPhase = 0;
       this.phases = [...this.parts];
       this.updateDisplay();
-      beep(1000,100);
+      beep(getBeepFreq('rep'), 100);
+      this.emitPhaseBeep();
     } else {
       this.phases = [...this.parts];
+      this.emitPhaseBeep();
     }
   }
-  updateDisplay(){
-    const ph=["⬇️ DESC","⏸️ BAS","⬆️ MONT","⏸️ HAUT"];
-    document.getElementById("timer").innerHTML = `<span style="font-size:28px">${this.currentRep}/${this.totalReps}</span><br><span style="font-size:24px">${ph[this.currentPhase]} ${this.phases[this.currentPhase]}s</span>`;
-    document.getElementById("status").innerHTML = t('tempoMode');
-    state.currentRep = this.currentRep;
-    state.currentPhase = this.currentPhase;
-    state.tempoPhases = this.phases;
+
+  emitSecondBeep(){
+    const cfg = getBeepConfig();
+    let freq = 500;
+    if(this.currentPhase === 0) freq = cfg.down;
+    else if(this.currentPhase === 1) freq = cfg.holdDown;
+    else if(this.currentPhase === 2) freq = cfg.up;
+    else if(this.currentPhase === 3) freq = cfg.holdUp;
+    beep(freq, 80);
   }
+
+  emitPhaseBeep(){
+    const cfg = getBeepConfig();
+    let freq = 600;
+    if(this.currentPhase === 0) freq = cfg.down + 120;
+    else if(this.currentPhase === 1) freq = cfg.holdDown + 120;
+    else if(this.currentPhase === 2) freq = cfg.up + 120;
+    else if(this.currentPhase === 3) freq = cfg.holdUp + 120;
+    beep(freq, 60);
+  }
+
+  updateDisplay(){
+	const ph = ["🢃 ", "🞹 ", "🢁 ", "🞹 "];
+	const colors = ["#00BFFF", "#A9A9A9", "#FF4500", "#A9A9A9"];
+	const color = colors[this.currentPhase] || "#FFFFFF";
+	const timer = document.getElementById("timer");
+	timer.innerHTML = `<span style="font-size:28px">${this.currentRep}/${this.totalReps}</span><br><span style="font-size:8vw; line-height:1.2"><span style="color:${color};">${ph[this.currentPhase]} ${this.phases[this.currentPhase]}s</span></span>`;
+	document.getElementById("status").innerHTML = t('tempoMode');
+	state.currentRep = this.currentRep;
+	state.currentPhase = this.currentPhase;
+	state.tempoPhases = this.phases;
+}
+
   stop(){
-    if(this.interval) clearInterval(this.interval);
+    if(this.timeout){ clearTimeout(this.timeout); this.timeout = null; }
     state.isTempoMode = false;
     state.tempoInterval = null;
-    document.getElementById("timer").style.fontSize = "56px";
     this.isActive = false;
+    document.getElementById("timer").style.fontSize = "56px";
   }
 }
 
@@ -495,23 +619,29 @@ function timerTick(){
   advanceBlock();
 }
 
+// ==================== GESTION DU DÉMARRAGE / REPRISE ====================
 function startWorkout(){
   getAudioContext();
+
+  // --- CAS 1 : REPRISE APRÈS PAUSE ---
   if(state.isPaused){
     state.isPaused = false;
-    // Reprise du tempo
     if(state.isTempoMode && currentTempo){
-      currentTempo.start();
-    } 
-    // Reprise du mode classique (durée)
-    else if(!state.isTempoMode && state.timerInterval === null){
+      currentTempo.resume(); // <-- Reprise sans réinitialiser les phases
+    } else if(!state.isTempoMode && state.timerInterval === null){
       state.timerInterval = setInterval(timerTick, 1000);
     }
     document.getElementById("start-btn").innerHTML = t('start');
     updateDisplay();
     return;
   }
-  if((state.isTempoMode && currentTempo && currentTempo.isActive) || (!state.isTempoMode && state.timerInterval !== null)) return;
+
+  // --- CAS 2 : DÉJÀ EN COURS (on ne fait rien) ---
+  if((state.isTempoMode && currentTempo && currentTempo.isActive) || (!state.isTempoMode && state.timerInterval !== null)){
+    return;
+  }
+
+  // --- CAS 3 : PHASE DE PRÉPARATION ---
   if(state.isSetupPhase){
     resetWorkoutInternal();
     state.timerInterval = setInterval(timerTick, 1000);
@@ -519,6 +649,8 @@ function startWorkout(){
     document.getElementById("start-btn").innerHTML = t('start');
     return;
   }
+
+  // --- CAS 4 : DÉMARRAGE D'UN BLOC TEMPO OU DURÉE ---
   const blocks = getBlocks();
   if(state.currentBlockIndex >=0 && state.currentBlockIndex < blocks.length){
     const block = blocks[state.currentBlockIndex];
@@ -550,11 +682,11 @@ function resetWorkoutInternal(){
   state.isPaused = false;
 }
 function resetWorkout(){ resetWorkoutInternal(); document.getElementById("start-btn").innerHTML = t('start'); updateDisplay(); }
+// ==================== GESTION DE LA PAUSE (reprise tempo corrigée) ====================
 function pauseWorkout(){
   if(state.isTempoMode){
-    if(currentTempo && currentTempo.interval){
-      clearInterval(currentTempo.interval);
-      currentTempo.interval = null;
+    if(currentTempo && currentTempo.isActive){
+      currentTempo.pause(); // <-- On utilise pause() au lieu de clearInterval
     }
     state.isPaused = true;
     document.getElementById("status").innerHTML = t('pauseTempo');
@@ -1067,8 +1199,12 @@ function init(){
   resetWorkout();
   initDarkMode();
   applyTranslations();
-  
-  // Service worker ignoré silencieusement en file://
+
+  // ✅ CORRECTION N°2 : charger les fréquences et brancher le bouton (hors du bloc SW)
+  loadBeepFreqsIntoUI();
+  document.getElementById('save-beep-btn').onclick = saveBeepFreqs;
+
+  // Service worker (inchangé)
   if('serviceWorker' in navigator && location.protocol !== 'file:') {
     navigator.serviceWorker.register('./sw.js').catch(e=>console.log('SW err',e));
   }
