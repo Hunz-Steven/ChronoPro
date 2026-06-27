@@ -344,7 +344,7 @@ class TempoController {
       if(!this.isActive) return;
     }
     this.updateDisplay();
-    this.emitPhaseBeep(); // Bip de début de phase
+    // this.emitPhaseBeep(); // Bip de début de phase SUPPRIMÉ (bip redondant)
     this.nextTickTime = performance.now() + 1000;
     this.scheduleTick();
     state.tempoInterval = this.timeout;
@@ -413,11 +413,11 @@ class TempoController {
       this.currentPhase = 0;
       this.phases = [...this.parts];
       this.updateDisplay();
-      beep(getBeepFreq('rep'), 100);
-      this.emitPhaseBeep();
+      beep(getBeepFreq('rep'), 100); // Bip de fin de répétition (gardé)
+      // this.emitPhaseBeep(); // SUPPRIMÉ
     } else {
       this.phases = [...this.parts];
-      this.emitPhaseBeep();
+      // this.emitPhaseBeep(); // SUPPRIMÉ
     }
   }
 
@@ -590,7 +590,7 @@ function advanceBlock(){
       return;
     } else {
       state.timeLeft = block.duration !== undefined ? block.duration : 30;
-      beep(880,350);
+      // beep(1200,80); // SUPPRIMÉ
     }
   } else {
     state.timeLeft = block.duration;
@@ -605,16 +605,24 @@ function advanceBlock(){
 
 function timerTick(){
   if(state.isPaused) return;
+
+  // Bips pour les 5 dernières secondes (si vous voulez limiter à 3, changez <=5 en <=3)
   if(state.timeLeft <=5 && state.timeLeft>0) beep(440+state.timeLeft*80,120);
+
   if(state.timeLeft > 0){
     state.timeLeft--;
     document.getElementById("timer").innerHTML = formatMMSS(state.timeLeft);
     return;
   }
+
+  // --- ICI timeLeft === 0 : on émet un bip aigu de "départ" ---
+  beep(1000, 300); // Fréquence aiguë, durée plus longue pour bien marquer
+
   if(state.isSetupPhase){
     state.isSetupPhase = false;
     state.currentBlockIndex = -1;
-    beep(1000,500);
+    // On peut garder ou supprimer le bip existant (1000,500) ici, selon vos préférences
+    // beep(1000,500); // Commenté si vous préférez le nouveau bip
   }
   advanceBlock();
 }
