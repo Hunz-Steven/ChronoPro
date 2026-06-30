@@ -174,8 +174,7 @@
 		<label>⬇️ Descendre (Hz) : <input type="number" id="beep-down" value="300" step="10" min="100" max="2000" style="width:70px"></label>
 		<label>⏸️ Bas (Hz) : <input type="number" id="beep-hold-down" value="500" step="10" min="100" max="2000" style="width:70px"></label>
 		<label>⬆️ Monter (Hz) : <input type="number" id="beep-up" value="800" step="10" min="100" max="2000" style="width:70px"></label>
-		<label>⏸️ Haut (Hz) : <input type="number" id="beep-hold-up" value="500" step="10" min="100" max="2000" style="width:70px"></label>
-		<label style="grid-column:span 2">🔁 Fin de répétition (Hz) : <input type="number" id="beep-rep" value="1000" step="10" min="100" max="2000" style="width:70px"></label>
+		<label>⏸️ Haut (Hz) : <input type="number" id="beep-hold-up" value="500" step="10" min="100" max="2000" style="width:70px"></label>		
 		</div>
 		<button id="save-beep-btn" style="margin-top:8px">💾 Sauvegarder mes fréquences</button>
 		<div class="help">Les bips de changement de phase sont automatiquement plus aigus (+120 Hz).</div>
@@ -214,7 +213,7 @@ const BASE_TR = {
 };
 // ==================== GESTION DES FRÉQUENCES AUDIO ====================
 function getBeepConfig(){
-  const defaultFreqs = { down: 300, holdDown: 500, up: 800, holdUp: 500, rep: 1000 };
+  const defaultFreqs = { down: 300, holdDown: 500, up: 800, holdUp: 500 };
   try {
     const saved = localStorage.getItem('chronoPro_beepFreqs');
     if(saved) return { ...defaultFreqs, ...JSON.parse(saved) };
@@ -231,8 +230,7 @@ function saveBeepFreqs(){
     down: parseInt(document.getElementById('beep-down').value) || 300,
     holdDown: parseInt(document.getElementById('beep-hold-down').value) || 500,
     up: parseInt(document.getElementById('beep-up').value) || 800,
-    holdUp: parseInt(document.getElementById('beep-hold-up').value) || 500,
-    rep: parseInt(document.getElementById('beep-rep').value) || 1000
+    holdUp: parseInt(document.getElementById('beep-hold-up').value) || 500,    
   };
   localStorage.setItem('chronoPro_beepFreqs', JSON.stringify(freqs));
   showAutoSave('Fréquences sauvegardées');
@@ -243,8 +241,7 @@ function loadBeepFreqsIntoUI(){
   document.getElementById('beep-down').value = cfg.down;
   document.getElementById('beep-hold-down').value = cfg.holdDown;
   document.getElementById('beep-up').value = cfg.up;
-  document.getElementById('beep-hold-up').value = cfg.holdUp;
-  document.getElementById('beep-rep').value = cfg.rep;
+  document.getElementById('beep-hold-up').value = cfg.holdUp;  
 }
 let currentLang = localStorage.getItem('chronoPro_lang') || 'fr';
 let currentTr = BASE_TR[currentLang] || BASE_TR.fr;
@@ -413,11 +410,8 @@ class TempoController {
       this.currentPhase = 0;
       this.phases = [...this.parts];
       this.updateDisplay();
-      beep(getBeepFreq('rep'), 100); // Bip de fin de répétition (gardé)
-      // this.emitPhaseBeep(); // SUPPRIMÉ
     } else {
       this.phases = [...this.parts];
-      // this.emitPhaseBeep(); // SUPPRIMÉ
     }
   }
 
